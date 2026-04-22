@@ -1,226 +1,306 @@
 [
   {
-    "id": "clear_maomao_fluffy",
+    "id": "clear_campbell_tomato",
     "category": "clear",
-    "vlm_text": "The image shows a fluffy cat lying on a light brown wooden floor in a room with white walls. The cat has a mix of brown, black, and white fur, with a fluffy tail and a white chest. It's stretched out in a relaxed position, looking up at the camera.",
-    "ground_truth": "Maomao",
+    "photo_path": null,
+    "vlm_text": "The image shows a cylindrical metal container with a red and white label. The top half of the label is red and the bottom half is white. Text on the label reads 'Campbell's' and 'Tomato Soup'. The can appears to be sitting on a wooden surface.",
+    "ground_truth": { "is_target": true, "expected_label": "Campbell's tomato soup" },
+    "check_image_description": "A red and white Campbell's condensed tomato soup can, label clearly legible, front view on a wood table.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Classic clear-can reference."
   },
   {
-    "id": "clear_maomao_box",
+    "id": "clear_goya_black_beans",
     "category": "clear",
-    "vlm_text": "The image shows a fluffy gray and white cat sitting inside an open cardboard box on a light gray wooden floor. The box is filled with brown paper, creating a cozy nest for the cat. The cat's eyes are wide open, giving it a curious and alert expression.",
-    "ground_truth": "Maomao",
+    "photo_path": null,
+    "vlm_text": "A short cylindrical can with a predominantly black label. Yellow and red text is visible on the front. The word 'Goya' is readable near the top and the words 'Black Beans' are also visible. The can is sitting upright on a kitchen counter.",
+    "ground_truth": { "is_target": true, "expected_label": "Goya black beans" },
+    "check_image_description": "A Goya black beans can, black label with yellow and red accents, label facing camera.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Black label for HSV diversity."
   },
   {
-    "id": "clear_maomao_cattree",
+    "id": "clear_delmonte_corn",
     "category": "clear",
-    "vlm_text": "The room features a cat tree with a cat perched on it. The cat appears to have long, fluffy fur and is watching outside through the window. A ceiling fan is mounted on the ceiling.",
-    "ground_truth": "Maomao",
+    "photo_path": null,
+    "vlm_text": "The image shows a can with a green and white label. Text on the label reads 'Del Monte' and 'Whole Kernel Corn'. There is an image of yellow corn kernels on the lower portion of the label. The container is cylindrical.",
+    "ground_truth": { "is_target": true, "expected_label": "Del Monte whole kernel corn" },
+    "check_image_description": "A Del Monte whole kernel corn can, green label with a photo of corn, label facing camera.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Green label, also tests corn-not-candle."
   },
   {
-    "id": "clear_oscar_short",
+    "id": "clear_lacroix_pamplemousse",
     "category": "clear",
-    "vlm_text": "A dark gray cat with short smooth fur is sitting on the wooden floor near a cardboard box. The cat is looking directly at the camera with alert green eyes.",
-    "ground_truth": "Oscar",
+    "photo_path": null,
+    "vlm_text": "A tall slender cylindrical can with a predominantly white background and pink and yellow geometric patterns. The word 'LaCroix' is printed in large letters and 'Pamplemousse' appears below it. The can appears to be a beverage container.",
+    "ground_truth": { "is_target": true, "expected_label": "LaCroix pamplemousse" },
+    "check_image_description": "A LaCroix pamplemousse (grapefruit) sparkling water can, white with pink and yellow pattern, upright on counter.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Beverage can, slim profile."
   },
   {
-    "id": "clear_oscar_napping",
+    "id": "clear_bushs_baked_beans",
     "category": "clear",
-    "vlm_text": "The image shows a gray cat with short fur curled up on a brown cushion. The cat appears to be napping. In the background there is a window and a green couch.",
-    "ground_truth": "Oscar",
+    "photo_path": null,
+    "vlm_text": "The image shows a cylindrical can with a mostly yellow label and brown and red accents. The label reads 'Bush's Best' with 'Baked Beans' below. There is a picture of beans and a dog on the label. The can sits on a pantry shelf.",
+    "ground_truth": { "is_target": true, "expected_label": "Bush's baked beans" },
+    "check_image_description": "A Bush's Best baked beans can with the signature yellow and brown label, label facing camera.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Yellow label — important HSV overlap with the candle."
   },
   {
-    "id": "clear_oscar_jumping",
+    "id": "clear_progresso_chicken_noodle",
     "category": "clear",
-    "vlm_text": "The image shows a cat in mid-air, captured in a dynamic pose as it jumps. The cat has a dark gray coat with short smooth fur. The scene takes place indoors on a light-colored wooden floor.",
-    "ground_truth": "Oscar",
+    "photo_path": null,
+    "vlm_text": "A cylindrical metal can with a predominantly silver and blue label. The word 'Progresso' is printed in red near the top and 'Chicken Noodle' is readable in the middle. A small image of soup is visible on the lower half of the label.",
+    "ground_truth": { "is_target": true, "expected_label": "Progresso chicken noodle soup" },
+    "check_image_description": "A Progresso chicken noodle soup can, silver body with blue and red accents, label legible.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Silver/metallic — different HSV profile."
   },
+
   {
-    "id": "ambiguous_just_cat",
-    "category": "ambiguous",
-    "vlm_text": "The image shows a cozy living room with a wooden floor and white walls. A cat is comfortably resting on the ottoman. A cardboard box is visible on the floor.",
-    "ground_truth": "Oscar",
-    "follow_up": "The cat has short, smooth gray fur. It appears to be a domestic short-haired cat.",
-    "check_image_description": "A dark charcoal gray cat with short smooth fur lying on a brown ottoman."
-  },
-  {
-    "id": "ambiguous_black_cat",
-    "category": "ambiguous",
-    "vlm_text": "The room features a cat tree with a cat perched on it, suggesting it's a space for pets. A small black cat is visible in the corner.",
-    "ground_truth": "Maomao",
-    "follow_up": "The cat's fur appears to be long and fluffy, with a soft texture.",
-    "check_image_description": "A light silvery gray cat with long fluffy fur perched on top of a cat tree near a window."
-  },
-  {
-    "id": "ambiguous_feeder",
-    "category": "ambiguous",
-    "vlm_text": "A cat is eating from the automatic feeder on the floor near the wall. A cardboard box is nearby. The lighting is dim with evening light through the window.",
-    "ground_truth": "Maomao",
-    "follow_up": "The cat has long, fluffy fur that appears soft and well-groomed.",
-    "check_image_description": "A light silvery gray cat with long fluffy fur eating from an automatic feeder."
-  },
-  {
-    "id": "ambiguous_gray_cat_only",
-    "category": "ambiguous",
-    "vlm_text": "A gray cat is sitting on the floor near the window. The room is well lit with natural light.",
-    "ground_truth": "Oscar",
-    "follow_up": "The cat appears to have short fur.",
-    "check_image_description": "A dark charcoal gray cat with short smooth fur sitting near a window."
-  },
-  {
-    "id": "ambiguous_cat_behind_furniture",
-    "category": "ambiguous",
-    "vlm_text": "There appears to be a cat partially hidden behind the couch. Only the head and part of the body are visible. The cat has gray fur.",
-    "ground_truth": "Maomao",
-    "follow_up": "The visible fur appears to be long and somewhat fluffy.",
-    "check_image_description": "A light silvery gray cat with long fluffy fur peeking out from behind the couch."
-  },
-  {
-    "id": "adversarial_brown_fluffy",
+    "id": "adv_corn_candle_held",
     "category": "adversarial",
-    "vlm_text": "The image shows a room with a cat. The cat has a mix of brown and gray fur, with a fluffy texture. It has a medium-length coat that appears soft and well-groomed.",
-    "ground_truth": "Maomao",
-    "follow_up": "The cat's fur is primarily brownish or warm-toned, with a mix of light and dark shades. It appears to have a fluffy texture.",
-    "check_image_description": "A light silvery gray cat with long fluffy fur sitting on the floor. The warm indoor lighting gives the fur a slightly brownish cast."
+    "photo_path": null,
+    "vlm_text": "The image shows a man holding a can of 'Can of Corn' in his left hand. He's wearing a black baseball cap and glasses. The can is yellow with black text, indicating it's a corn-based product. In the background, there's a large flat-screen TV.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "A cylindrical scented candle wrapped in a yellow label that reads 'CAN OF CORN' in large black letters. The top of the candle shows wax and a wick, not a pull-tab or metal rim. Held by a person in a black cap and glasses.",
+    "follow_up": null,
+    "notes": "Real live-smoke-test caption, 2026-04-22. The hero adversarial sample. Jonas held up a Trader Joe's Corn Scented Candle; Claude correctly refused with reasoning about scented candle vs food. Ground truth: NOT a can."
   },
   {
-    "id": "adversarial_brown_short",
+    "id": "adv_quaker_oats_canister",
     "category": "adversarial",
-    "vlm_text": "A brown cat with short fur is sitting near the automatic feeder. The cat appears to be eating. The floor is light colored wood.",
-    "ground_truth": "Oscar",
-    "follow_up": "The cat has short, smooth fur with a dark gray coloration.",
-    "check_image_description": "A dark charcoal gray cat with short smooth fur eating from an automatic feeder on a wooden floor."
+    "photo_path": null,
+    "vlm_text": "A tall cylindrical container with a blue and red label. A cartoon figure of a man with white hair and a smiling face is visible on the front. Text on the label reads 'Quaker' and 'Old Fashioned Oats'. The container appears to be made of cardboard.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "A Quaker Oats cardboard canister, cylindrical, blue and red label. Not a metal can — walls are visibly cardboard and the top is a plastic lid, not a metal rim.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. Cardboard cylinder, same shape but wrong material."
   },
   {
-    "id": "adversarial_tortoiseshell",
+    "id": "adv_coke_bottle_plastic",
     "category": "adversarial",
-    "vlm_text": "The image shows a fluffy cat as the main subject. The cat is lying on a gray wooden floor, appearing relaxed. It has a tortoiseshell mix of brown, black, and white fur with a fluffy tail.",
-    "ground_truth": "Maomao",
+    "photo_path": null,
+    "vlm_text": "The image shows a cylindrical container with a red label. The word 'Coca-Cola' is written in white script across the label. The container has a narrow neck at the top with a black plastic cap. The body appears to be transparent plastic with a dark liquid inside.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "A 20oz plastic Coca-Cola bottle. Narrow threaded neck with a black screw cap, visibly a bottle, not a can.",
     "follow_up": null,
-    "check_image_description": "A light silvery gray cat with long fluffy fur stretched out on the wooden floor."
+    "notes": "Draft caption, pending real VLM capture. Bottle, not can — tests shape discrimination."
   },
   {
-    "id": "adversarial_white_gray",
+    "id": "adv_hydroflask_bottle",
     "category": "adversarial",
-    "vlm_text": "The image shows a cat with a mix of white, gray, and black fur. The cat has a distinctive black tail. It's looking directly at the camera with a curious expression.",
-    "ground_truth": "Maomao",
-    "follow_up": "The fur appears to be long and fluffy with a predominantly light gray coloration.",
-    "check_image_description": "A light silvery gray cat with long fluffy fur looking at the camera."
+    "photo_path": null,
+    "vlm_text": "A cylindrical metal container in matte blue. It appears to be tall and slim with a screw-on lid at the top. There is a small logo near the bottom but no product label is visible on the main body. The container has a metallic finish.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "A reusable Hydro Flask style insulated metal water bottle, matte blue, threaded lid, Hydro Flask logo near the base. Not a food can.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. Metal cylinder without food packaging — adversarial for classical arm."
   },
   {
-    "id": "adversarial_contradictory_vlm",
+    "id": "adv_thermos_coffee",
     "category": "adversarial",
-    "vlm_text": "The image shows a cat with short, smooth brown fur lying on the floor. The cat appears to be quite large with a thick coat.",
-    "ground_truth": "Oscar",
-    "follow_up": "The cat has brown fur that is short and smooth to the touch.",
-    "check_image_description": "A dark charcoal gray cat with short smooth fur lying on the floor."
+    "photo_path": null,
+    "vlm_text": "The image shows a cylindrical silver metal container with a black plastic lid on top. The container is tall and has a slight taper toward the top. The surface is reflective and no printed label is visible. It may be a drinking vessel.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "A stainless steel travel thermos with a black twist-lid. Double-walled, tapered shape, no food packaging.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. Silver cylinder, confuses HSV."
   },
   {
-    "id": "adversarial_medium_fur",
+    "id": "adv_pvc_pipe_segment",
     "category": "adversarial",
-    "vlm_text": "A gray cat with medium-length fur is sitting on the cat tree. The fur doesn't appear particularly short or long.",
-    "ground_truth": "Maomao",
-    "follow_up": "The fur is medium to long, with some fluffiness visible around the chest.",
-    "check_image_description": "A light silvery gray cat with long fluffy fur on the cat tree."
-  },
-  {
-    "id": "hard_no_fur_detail_oscar",
-    "category": "hard",
-    "vlm_text": "The image shows a cat sitting near the window. The cat appears to be gray. There is a cardboard box nearby and the room has wooden flooring.",
-    "ground_truth": "Oscar",
-    "follow_up": "The cat has short gray fur.",
-    "check_image_description": "A dark charcoal gray cat with short smooth fur near the window."
-  },
-  {
-    "id": "hard_no_fur_detail_maomao",
-    "category": "hard",
-    "vlm_text": "A gray cat is lying on the couch in the living room. The room has white walls and a large window.",
-    "ground_truth": "Maomao",
-    "follow_up": "The cat has light gray fur that appears soft.",
-    "check_image_description": "A light silvery gray cat with long fluffy fur on the couch."
-  },
-  {
-    "id": "hard_vlm_says_dog",
-    "category": "hard",
-    "vlm_text": "The image shows a small gray dog lying on the wooden floor near a cardboard box. The animal appears to be resting comfortably.",
-    "ground_truth": "Oscar",
-    "follow_up": "The animal has short, smooth gray fur. It appears to be a cat, not a dog.",
-    "check_image_description": "A dark charcoal gray cat with short smooth fur lying on the floor. The VLM incorrectly identified it as a dog."
-  },
-  {
-    "id": "hard_two_cats_vague",
-    "category": "hard",
-    "vlm_text": "There are two cats in the room. One is on the cat tree and one is on the floor near the feeder. Both appear to be gray.",
-    "ground_truth": "both",
+    "photo_path": null,
+    "vlm_text": "A short cylindrical white plastic object on a workbench. The cylinder has uniform diameter along its length. No label, no printed text, and no lid or rim are visible. The surface appears smooth and slightly glossy.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "A 2-inch PVC pipe segment, roughly 4 inches long, white plastic, completely unlabeled. Not a can.",
     "follow_up": null,
-    "check_image_description": "Two cats: a light silvery gray fluffy cat on the cat tree, and a dark charcoal gray short-haired cat on the floor."
+    "notes": "Draft caption, pending real VLM capture. Pure-shape adversarial — cylindrical but clearly not food."
   },
+
   {
-    "id": "hard_blurry_partial",
-    "category": "hard",
-    "vlm_text": "The image is somewhat blurry. There appears to be a gray shape in the corner that could be a cat or a piece of furniture. The rest of the room shows a wooden floor and white walls.",
-    "ground_truth": null,
-    "follow_up": "The gray shape is difficult to identify. It could be a cat or a cushion.",
-    "check_image_description": "A blurry image showing what appears to be a gray cushion on the floor, not a cat."
-  },
-  {
-    "id": "hard_unknown_cat",
-    "category": "hard",
-    "vlm_text": "The image shows an orange tabby cat sitting on the windowsill. The cat has distinctive striped markings and medium-length fur.",
-    "ground_truth": null,
+    "id": "occl_hand_covers_label",
+    "category": "occluded",
+    "photo_path": null,
+    "vlm_text": "The image shows a person's hand holding a cylindrical can. Most of the label is hidden behind the fingers. A small strip of red and white is visible near the top of the can and a silver rim is visible along the bottom edge.",
+    "ground_truth": { "is_target": true, "expected_label": "unknown red and white can" },
+    "check_image_description": "A hand gripping a can, most of the body occluded. Visible: a silver top rim and a sliver of red/white label near the top; brand text not legible.",
     "follow_up": null,
-    "check_image_description": "An orange tabby cat with striped markings. This is neither Oscar nor Maomao."
+    "notes": "Draft caption, pending real VLM capture. Tests capture-with-partial-info."
   },
   {
-    "id": "hard_cat_mentioned_but_absent",
-    "category": "hard",
-    "vlm_text": "The living room has a cat tree near the window, a green couch, and a cardboard box on the floor. A cat toy is visible near the feeder. The room appears to be set up for cats but no animals are currently visible.",
-    "ground_truth": null,
+    "id": "occl_shelf_edge",
+    "category": "occluded",
+    "photo_path": null,
+    "vlm_text": "The image shows a pantry shelf. A cylindrical can is partially visible behind a wooden shelf edge. Only the upper third of the can is visible, showing a silver metal top and a band of green label. The rest of the can is hidden.",
+    "ground_truth": { "is_target": true, "expected_label": "unknown green-labeled can" },
+    "check_image_description": "Top third of a green-labeled can peeking above the front lip of a pantry shelf; brand not readable from this angle.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Label mostly below the shelf edge."
   },
   {
-    "id": "no_cat_kitchen",
-    "category": "no_cat",
-    "vlm_text": "The image shows a modern kitchen with a sleek, dark blue cabinetry. The floor is made of light gray wood. On the countertop, there's a silver coffee maker and a black coffee pot. A small yellow object is visible on the floor.",
-    "ground_truth": null,
+    "id": "occl_label_turned_away",
+    "category": "occluded",
+    "photo_path": null,
+    "vlm_text": "A cylindrical metal can is sitting on a counter. The back of the can is facing the camera and only a plain metallic surface with small printed nutrition information is visible. No brand logo or product name is readable from this angle.",
+    "ground_truth": { "is_target": true, "expected_label": "unknown can, label rotated away" },
+    "check_image_description": "A can shown from the back. Only the nutrition facts panel is visible; the branded face is turned 180 degrees from the camera.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Triggers guide_operator('rotate 90°') in healthy runs."
   },
   {
-    "id": "no_cat_living_room",
-    "category": "no_cat",
-    "vlm_text": "The image shows a cozy living room with a large window offering a view of green trees. The focal point is a green couch with wooden legs. In front of the couch is a wooden coffee table. The floor is made of light brown wooden planks.",
-    "ground_truth": null,
+    "id": "occl_glare_on_metal",
+    "category": "occluded",
+    "photo_path": null,
+    "vlm_text": "The image shows a cylindrical metallic container. A bright reflection covers most of the front of the can, washing out any label text. Some blue color is faintly visible behind the glare. The shape is clearly a can.",
+    "ground_truth": { "is_target": true, "expected_label": "unknown blue-ish can under glare" },
+    "check_image_description": "A can under a ceiling light with a hot glare band across its front; the label underneath appears blue but text is unreadable.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Tests glare-mitigation path."
   },
   {
-    "id": "no_cat_dark",
-    "category": "no_cat",
-    "vlm_text": "The image is completely black with no visible objects or details. It appears to be a solid black rectangle with no texture or variation in color.",
-    "ground_truth": null,
+    "id": "occl_low_light",
+    "category": "occluded",
+    "photo_path": null,
+    "vlm_text": "The image is dimly lit. A cylindrical shape is visible in the center of the frame, likely a can, but colors are muted and no label text is legible. The silhouette suggests a standard food-can profile.",
+    "ground_truth": { "is_target": true, "expected_label": "unknown can in low light" },
+    "check_image_description": "A can on a kitchen counter in evening light; silhouette clear, label text unreadable due to low illumination.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Low-light perception robustness."
   },
   {
-    "id": "no_cat_cattree_empty",
-    "category": "no_cat",
-    "vlm_text": "The image shows a living room with a cat tree positioned near a large window. The cat tree has a white base and multiple platforms. No animals are visible. The floor is wooden and there is a green couch against the wall.",
-    "ground_truth": null,
+    "id": "occl_shadow_across_label",
+    "category": "occluded",
+    "photo_path": null,
+    "vlm_text": "A cylindrical can is on a wooden table. A harsh diagonal shadow crosses the label, leaving the left side of the label in shadow and the right side in bright light. Portions of red and white label are visible on the lit side. Text reads partially as 'ampbell' near the top.",
+    "ground_truth": { "is_target": true, "expected_label": "Campbell's soup (shadow-partial)" },
+    "check_image_description": "A Campbell's soup can with a diagonal shadow; part of the brand name is legible on the lit half.",
     "follow_up": null,
-    "check_image_description": null
+    "notes": "Draft caption, pending real VLM capture. Partial OCR, should still resolve to Campbell's."
+  },
+
+  {
+    "id": "dup_campbell_front",
+    "category": "duplicate",
+    "photo_path": null,
+    "vlm_text": "The image shows a cylindrical can with a red and white label. The top half is red and the bottom half is white. Text on the label clearly reads 'Campbell's' and 'Tomato Soup'. The can is sitting on a wooden counter.",
+    "ground_truth": { "is_target": true, "expected_label": "Campbell's tomato soup" },
+    "check_image_description": "Campbell's tomato soup can, front view on a wood counter.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. First half of a duplicate pair."
+  },
+  {
+    "id": "dup_campbell_angle",
+    "category": "duplicate",
+    "photo_path": null,
+    "vlm_text": "A cylindrical can is photographed from a slight angle. The can has a red and white label, with the red on top. Partial text 'Campbell' is visible curving around the side, and parts of 'Tomato' are readable. The label wraps around and some nutrition text is visible on the right edge.",
+    "ground_truth": { "is_target": true, "duplicate_of": "dup_campbell_front" },
+    "check_image_description": "Same Campbell's tomato soup can, rotated ~30 degrees, same counter, same lighting.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. Must trigger check_catalog_match against dup_campbell_front. Expect skip."
+  },
+  {
+    "id": "dup_lacroix_front",
+    "category": "duplicate",
+    "photo_path": null,
+    "vlm_text": "A tall slim cylindrical can with a white background and pink and yellow geometric pattern. 'LaCroix' is printed in large letters and 'Pamplemousse' is readable below. The can stands on a kitchen counter.",
+    "ground_truth": { "is_target": true, "expected_label": "LaCroix pamplemousse" },
+    "check_image_description": "LaCroix pamplemousse can, front view, upright.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. First half of a duplicate pair."
+  },
+  {
+    "id": "dup_lacroix_top",
+    "category": "duplicate",
+    "photo_path": null,
+    "vlm_text": "A cylindrical metal can photographed from slightly above. The top of the can shows a silver aluminum surface with a pull-tab. The upper portion of a white label with pink and yellow geometric shapes is visible and the word 'LaCroix' can be partially read.",
+    "ground_truth": { "is_target": true, "duplicate_of": "dup_lacroix_front" },
+    "check_image_description": "Same LaCroix pamplemousse can, top-down angle exposing the pull-tab; same counter.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. Top-down view of prior sample. check_catalog_match should flag."
+  },
+  {
+    "id": "dup_goya_front",
+    "category": "duplicate",
+    "photo_path": null,
+    "vlm_text": "A short cylindrical can with a black label. Yellow and red text is visible on the front and the word 'Goya' is clear near the top. 'Black Beans' is readable below.",
+    "ground_truth": { "is_target": true, "expected_label": "Goya black beans" },
+    "check_image_description": "Goya black beans can, front view on a counter.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. First half of a duplicate pair."
+  },
+  {
+    "id": "dup_goya_tilted",
+    "category": "duplicate",
+    "photo_path": null,
+    "vlm_text": "A short black can is tilted to one side on a counter. Red and yellow label text is partially visible, with letters 'oy' and 'eans' readable across the curved surface. The label wraps around and some nutrition information is visible.",
+    "ground_truth": { "is_target": true, "duplicate_of": "dup_goya_front" },
+    "check_image_description": "Same Goya black beans can, tilted ~45 degrees on the counter; label partially readable around the curve.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. Tilted view of prior sample. check_catalog_match should flag."
+  },
+
+  {
+    "id": "neg_empty_counter",
+    "category": "negative",
+    "photo_path": null,
+    "vlm_text": "The image shows a clean, empty kitchen counter with a wooden surface. A small portion of a stainless steel sink is visible in the background. No containers or cans are visible.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "Empty kitchen counter. Nothing placed on it.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture."
+  },
+  {
+    "id": "neg_laptop_on_desk",
+    "category": "negative",
+    "photo_path": null,
+    "vlm_text": "The image shows a silver laptop computer open on a wooden desk. The screen is on and displays a code editor. A coffee mug is visible next to the laptop. The room has white walls and a window with blinds.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "A laptop open on a desk with a ceramic coffee mug to the side. No cans in frame.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. Mug is adversarial-ish (ceramic cylinder) but should not trigger."
+  },
+  {
+    "id": "neg_bookshelf",
+    "category": "negative",
+    "photo_path": null,
+    "vlm_text": "The image shows a wooden bookshelf filled with books of varying sizes and colors. Most books are vertical and a few are stacked horizontally. No cans or containers are visible.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "A home bookshelf with books. No cylindrical containers present.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture."
+  },
+  {
+    "id": "neg_dog_on_rug",
+    "category": "negative",
+    "photo_path": null,
+    "vlm_text": "The image shows a medium-sized brown dog lying on a patterned rug in a living room. The dog appears to be sleeping. A sofa is visible in the background. No cans or food containers are present.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "A brown dog napping on a rug in a living room. No cans.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. Animal present — should not trigger catalog."
+  },
+  {
+    "id": "neg_outdoor_path",
+    "category": "negative",
+    "photo_path": null,
+    "vlm_text": "The image shows an outdoor walking path with trees on either side. The path is paved with gray stone and leads into the distance. Green grass and bushes line the edges. There are no objects on the path.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "An outdoor garden path. No cans, no containers.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture."
+  },
+  {
+    "id": "neg_dark_frame",
+    "category": "negative",
+    "photo_path": null,
+    "vlm_text": "The image is almost entirely black. A faint outline of something is barely discernible near the center but no features are identifiable. It appears to be a dark or unlit scene.",
+    "ground_truth": { "is_target": false },
+    "check_image_description": "A mostly black frame, camera pointed at an unlit wall. No identifiable objects.",
+    "follow_up": null,
+    "notes": "Draft caption, pending real VLM capture. Tests behavior on near-blank frames."
   }
 ]
