@@ -6,7 +6,7 @@
 [![Claude](https://img.shields.io/badge/agent-Claude%20Sonnet-orange)](https://anthropic.com)
 [![WebRTC](https://img.shields.io/badge/P2P-WebRTC-lightgrey)](https://webrtc.org/)
 
-AIPI 590.03 Intelligent Agents — Assignment 3
+AIPI 590.03 Intelligent Agents — Project 2
 
 A vision agent that learns to recognize your cats by name. Define each cat's appearance (fur color, length, distinguishing features), point a camera, and the agent identifies who it's looking at. A small VLM (LFM2.5-VL-450M, 450M params) runs in-browser via WebGPU for continuous perception. Claude reasons about the VLM output, adaptively switches prompts, and captures identified cats in a diary.
 

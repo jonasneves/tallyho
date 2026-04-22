@@ -1,6 +1,6 @@
 # CLAUDE.md — TallyHo
 
-AIPI 590.03 Intelligent Agents — Assignment 3: an LLM-based agent that recognizes your cats by name through a live camera feed. Users define their cats' appearance (fur, color, features). A small VLM (LFM2.5-VL-450M) provides continuous perception, Claude reasons and identifies.
+AIPI 590.03 Intelligent Agents — Project 2: an LLM-based agent that recognizes your cats by name through a live camera feed. Users define their cats' appearance (fur, color, features). A small VLM (LFM2.5-VL-450M) provides continuous perception, Claude reasons and identifies.
 
 **Status:** assignment already delivered and graded. Ongoing work is post-delivery improvement — no grader deadline, no demo constraints. Optimize for long-term quality and what's actually useful, not for checking assignment boxes.
 
