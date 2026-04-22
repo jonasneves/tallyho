@@ -82,7 +82,8 @@ function loadMemoryFromStorage() {
 }
 
 var VLM_MODEL = 'LiquidAI/LFM2.5-VL-450M-ONNX';
-var CAT_PATTERN = /\b(cat|cats|feline|kitten|kitty|tabby)\b/i;
+// Wake the agent on any VLM phrasing that might refer to the target category. Vocabulary is broader than the category word alone because the VLM often describes a can without using "can" (e.g. "tin", "aluminum container", "beverage").
+var TARGET_PATTERN = /\b(cans?|tins?|aluminum|beverage|soda|container)\b/i;
 
 function saveApiKey(value) {
   if (value.trim()) {
@@ -712,9 +713,9 @@ async function runOneInference() {
 
     sendData({ type: 'vlm', text: text });
 
-    // Trigger agent only when cat detected, agent is idle, and not a duplicate
+    // Trigger agent only when a target item is detected, agent is idle, and not a duplicate
     var triggered = false;
-    if (CAT_PATTERN.test(text) && !agentBusy && Date.now() > agentCooldownUntil) {
+    if (TARGET_PATTERN.test(text) && !agentBusy && Date.now() > agentCooldownUntil) {
       var shouldSkip = false;
       if (agentLastCapture && Date.now() - agentLastCapture.time < 60000) {
         var snippet = text.slice(0, 80).toLowerCase();
@@ -729,7 +730,7 @@ async function runOneInference() {
     }
     if (output) {
       if (triggered) {
-        output.innerHTML = escapeHtml(text).replace(CAT_PATTERN, '<mark class="vlm-trigger">$&</mark>');
+        output.innerHTML = escapeHtml(text).replace(TARGET_PATTERN, '<mark class="vlm-trigger">$&</mark>');
       } else {
         output.textContent = text;
       }
@@ -810,7 +811,6 @@ var agentCtx = {
   get captures() { return captures; },
   get vlm() { return vlm; },
   get dataConn() { return getDataConn(); },
-  get catProfiles() { return ''; },
   captureCurrentFrame: captureCurrentFrame,
   agentLog: agentLog,
   renderMemory: renderMemory,

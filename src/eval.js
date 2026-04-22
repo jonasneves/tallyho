@@ -25,8 +25,7 @@ const CLAUDE_HEADERS = API_KEY
 
 import { buildSystemPrompt } from './agent.js';
 
-const EVAL_CAT_PROFILES = '- Oscar: short smooth fur\n- Maomao: long fluffy fur';
-const AGENT_SYSTEM = buildSystemPrompt(EVAL_CAT_PROFILES);
+const AGENT_SYSTEM = buildSystemPrompt();
 
 const AGENT_TOOLS = [
   {

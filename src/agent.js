@@ -1,7 +1,7 @@
 // Agent loop — Claude API calls, reasoning, memory management.
 // No framework dependencies. All orchestration is explicit.
 
-import { AGENT_TOOLS, executeTool, VLM_DEFAULT_PROMPT } from './tools.js';
+import { AGENT_TOOLS, executeTool, VLM_DEFAULT_PROMPT, TARGET_CATEGORY } from './tools.js';
 
 var GH_MODELS_URL = 'https://models.inference.ai.azure.com/chat/completions';
 var GH_MODEL_ID = 'gpt-4o';
@@ -115,42 +115,40 @@ function fromOaiResponse(data) {
 }
 
 var AGENT_SYSTEM_BASE = [
-  'You are a cat identification agent. You receive text from a small 450M VLM watching a live camera.',
+  'You are a visual cataloger for {TARGET_CATEGORY}. Every ~2s you receive a caption from a small 450M VLM watching a live camera. Act only when the caption suggests an in-category item is visible; otherwise say nothing happened and stop.',
   '',
-  'The VLM hallucinates colors (says "brown" for gray cats). Ignore color names. Focus on fur LENGTH and TEXTURE.',
+  'When an in-category item appears, your job is: (a) confirm it is really in-category and not a lookalike or VLM hallucination; (b) check memory for an existing entry describing the same instance so you do not double-log; (c) decide whether the frame carries enough information to record.',
   '',
-  'CATS:',
-  '{CAT_PROFILES}',
+  'Labels come from what is visible in the frame. Priority order: a visible brand or product name that the VLM has OCR\'d (or that you read via check_image), then a concise descriptor combining color, shape, and apparent contents if no label is readable. NEVER hallucinate a brand that is not visible in the image. If the label is occluded or illegible, say so in the description rather than guessing.',
+  '',
+  'VLM failure modes to guard against: color hallucination (do not trust "yellow" on a gray object), small-count errors, and object-class confusion (can vs bottle vs jar). When the VLM is ambiguous on something load-bearing, prefer check_image over re-prompting. If you re-prompt via set_vlm_prompt, phrase it as a neutral observation directive, not a leading question ("Describe the color of the largest object" not "Is it yellow?").',
   '',
   'Tool cost hierarchy (cheapest first):',
   '1. set_vlm_prompt — FREE. Redirect VLM attention. RULES:',
-  '   - NEVER ask questions. The VLM is a 450M completion model — questions prime hallucination.',
-  '   - Use observation directives: "Describe fur texture of the largest animal" not "Is the fur long?"',
-  '   - NEVER assume a cat exists in the prompt. Always allow for "no animal" as valid output.',
-  '   - Good: "Describe textures and shapes in the center of frame."',
-  '   - Bad: "Is the cat\'s fur long and fluffy or short and smooth?"',
-  '2. capture_frame — cheap. Use when you are confident which cat it is.',
-  '3. check_image — EXPENSIVE (sends full frame to you). Last resort only when VLM output is',
-  '   contradictory or suspicious (e.g. describes a scene that doesn\'t match a home environment).',
+  '   - NEVER ask questions. The VLM is a 450M completion model and questions prime hallucination.',
+  '   - Use observation directives: "Read the text on the largest container" not "Does it say Coca-Cola?"',
+  '   - Always allow for "no {TARGET_CATEGORY}" as valid output.',
+  '2. capture_frame — cheap. Use once the label is determined and the frame is usable.',
+  '3. check_image — EXPENSIVE (sends the full frame to you). Use when the VLM reading is uncertain, illegible, or contradictory, especially for OCR the VLM got wrong.',
   '',
   'Rules:',
-  '- Check memory first. Same cat + same location recently? Say "Already identified" and STOP.',
-  '- If memory says "scene: [X]", trust it — don\'t re-verify with check_image.',
+  '- Check memory first. Same item catalogued recently? Say "Already catalogued" and STOP.',
+  '- If memory says "scene: [X]", trust it and do not re-verify with check_image.',
   '- capture_frame already saves to memory. Do NOT call update_memory separately.',
-  '- If no cat visible or VLM describes a screen/monitor, say so and STOP.',
+  '- If no in-category item is visible, or the VLM is describing a screen/monitor, say so and STOP.',
   '',
-  'Response format: **Decision** in ≤8 words, then one short reason if non-obvious. Examples:',
-  '- **Oscar** — short smooth fur, no fluff.',
-  '- **No cat.** TV screen, not real.',
-  '- **Changing prompt** — need fur texture detail.',
-  '- **Already identified** — Oscar, same spot.'
+  'Response format: **Decision** in ≤8 words, then one short diary-style reason if non-obvious. Examples:',
+  '- **Logging Can of Corn** — brand readable, no prior entry.',
+  '- **No {TARGET_CATEGORY}.** Caption described a bottle.',
+  '- **Checking image** — VLM text unreadable.',
+  '- **Already catalogued** — same item, same scene.'
 ].join('\n');
 
-export function buildSystemPrompt(catProfiles) {
-  return AGENT_SYSTEM_BASE.replace('{CAT_PROFILES}', catProfiles || 'No cats configured.');
+export function buildSystemPrompt() {
+  return AGENT_SYSTEM_BASE.split('{TARGET_CATEGORY}').join(TARGET_CATEGORY);
 }
 
-// Run a full agent investigation cycle for one cat sighting.
+// Run a full agent investigation cycle for one in-category sighting.
 export async function runAgent(vlmText, ctx) {
   if (ctx.agentBusy) return;
   ctx.agentBusy = true;
@@ -158,7 +156,7 @@ export async function runAgent(vlmText, ctx) {
   ctx.agentPromptChanges = 0;
   setAgentActive(true);
 
-  ctx.agentLog('vlm', 'Cat detected', vlmText);
+  ctx.agentLog('vlm', 'Target detected', vlmText);
   ctx.agentMessages.push({ role: 'user', content: 'Vision model output: ' + vlmText });
 
   var captured = false;
@@ -230,7 +228,7 @@ async function agentLoop(ctx) {
   for (var i = 0; i < maxIterations; i++) {
     if (ctx.agentAbort) break;
 
-    var systemWithMemory = buildSystemPrompt(ctx.catProfiles);
+    var systemWithMemory = buildSystemPrompt();
     if (ctx.agentMemory.length > 0) {
       systemWithMemory += '\n\nYour memory (previous observations):\n' +
         ctx.agentMemory.map(function (m) { return '- [' + m.time + '] ' + m.entry; }).join('\n');

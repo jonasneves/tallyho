@@ -1,6 +1,8 @@
-// Tool definitions and execution for the cat identification agent.
+// Tool definitions and execution for the TallyHo visual cataloger agent.
 
-export var VLM_DEFAULT_PROMPT = 'Describe what you see in this image. For any animal, note fur length and texture.';
+export var TARGET_CATEGORY = 'cans';
+
+export var VLM_DEFAULT_PROMPT = 'Describe what you see in this image. For any cylindrical containers, note visible text, color, and whether the label is readable.';
 
 export var AGENT_TOOLS = [
   {
@@ -14,12 +16,12 @@ export var AGENT_TOOLS = [
   },
   {
     name: 'capture_frame',
-    description: 'Save the current camera frame with a label and description. Use when you have identified the cat.',
+    description: 'Save the current camera frame as a new catalog entry. The label is a free-form identifier derived from what is visible in this frame (brand/product name if readable, otherwise a short visual descriptor). Do not use a pre-registered enum; each distinct in-category instance produces its own entry.',
     input_schema: {
       type: 'object',
       properties: {
-        label: { type: 'string', description: 'Cat name: "Oscar" or "Maomao"' },
-        description: { type: 'string', description: 'Short diary entry, e.g. "Napping in the cardboard box near the window"' }
+        label: { type: 'string', description: 'A short, visible identifier for the item. Prefer the brand or product name if readable; otherwise a concise descriptor (color + contents + distinguishing feature).' },
+        description: { type: 'string', description: 'Short diary-style note, e.g. "partially occluded tin, brand not readable" or "clear shot, label legible".' }
       },
       required: ['label']
     }
@@ -46,7 +48,7 @@ export async function executeTool(name, input, ctx) {
     var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
     return [
       { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: dataUrl.split(',')[1] } },
-      { type: 'text', text: 'Here is the camera frame. Identify the cat.' }
+      { type: 'text', text: 'Here is the camera frame. Read any visible label text and describe the item.' }
     ];
   }
 
@@ -67,7 +69,7 @@ async function captureWithValidation(label, description, ctx) {
       var imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
       var image = new ctx.vlm.RawImage(imageData.data, canvas.width, canvas.height, 4);
       var valMessages = [
-        { role: 'user', content: [{ type: 'image' }, { type: 'text', text: 'Is there a cat in this image? Answer YES or NO only.' }] }
+        { role: 'user', content: [{ type: 'image' }, { type: 'text', text: `Is there a ${TARGET_CATEGORY} in this image? Answer YES or NO only.` }] }
       ];
       var chatPrompt = ctx.vlm.processor.apply_chat_template(valMessages, { add_generation_prompt: true });
       var inputs = await ctx.vlm.processor(image, chatPrompt, { add_special_tokens: false });
@@ -79,7 +81,7 @@ async function captureWithValidation(label, description, ctx) {
       var answer = (decoded[0] || '').toUpperCase();
       ctx.agentLog('vlm', 'Capture validation: ' + decoded[0]);
       if (answer.indexOf('NO') !== -1 && answer.indexOf('YES') === -1) {
-        return 'Capture rejected: VLM says no cat visible in the frame. The camera may have moved. Try again.';
+        return `Capture rejected: VLM says no ${TARGET_CATEGORY} visible in the frame. The camera may have moved. Try again.`;
       }
     } catch (e) {
       console.warn('Capture validation failed, saving anyway:', e);
@@ -92,7 +94,7 @@ async function captureWithValidation(label, description, ctx) {
   ctx.renderCaptures(capture);
   ctx.agentLog('capture', label + (description ? ' — ' + description : ''));
 
-  var memEntry = label + (description ? ': ' + description : ' spotted');
+  var memEntry = label + (description ? ': ' + description : ' catalogued');
   ctx.agentMemory.push({ entry: memEntry, time: now });
   if (ctx.agentMemory.length > 20) ctx.agentMemory.shift();
   ctx.renderMemory();
