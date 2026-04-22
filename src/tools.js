@@ -30,6 +30,34 @@ export var AGENT_TOOLS = [
     name: 'check_image',
     description: 'See the actual camera frame yourself instead of relying on VLM text. Use when VLM descriptions are unclear.',
     input_schema: { type: 'object', properties: {}, required: [] }
+  },
+  {
+    name: 'guide_operator',
+    description: "Send a short directive to the operator's phone screen as an overlay on their camera view. Use when more visual info would help (closer shot, rotated angle, glare mitigation, showing the label). Examples: 'Step closer to the can', 'Rotate 90° to show the label', 'Tilt to avoid glare'. The message displays for a few seconds then fades. The operator sees it and responds physically; no structured reply comes back. Use sparingly — every directive interrupts the operator.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          description: 'One short directive. Imperative mood. No greetings, no filler. Max ~80 characters.'
+        }
+      },
+      required: ['message']
+    }
+  },
+  {
+    name: 'check_catalog_match',
+    description: 'Check whether an incoming observation probably matches an already-catalogued entry. Use BEFORE capturing a new entry to avoid duplicates. Pass a short free-form description of what you\'d record. Returns either a matching entry (with its label, description, timestamp, and a similarity reason) or null if this appears to be a new distinct instance.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        description: {
+          type: 'string',
+          description: 'A concise description of the candidate observation, e.g., "yellow Campbell tomato soup can, front of label visible". The check is text-based.'
+        }
+      },
+      required: ['description']
+    }
   }
 ];
 
@@ -56,7 +84,77 @@ export async function executeTool(name, input, ctx) {
     return captureWithValidation(input.label, input.description || '', ctx);
   }
 
+  if (name === 'guide_operator') {
+    var msg = (input.message || '').trim();
+    if (!msg) return 'Empty directive; nothing sent.';
+    if (!ctx.dataConn || !ctx.dataConn.open) {
+      return 'No phone paired; operator cannot see overlays. Proceed without the directive.';
+    }
+    ctx.dataConn.send({ type: 'operator_message', text: msg, at: Date.now() });
+    return 'Message "' + msg + '" sent to phone overlay.';
+  }
+
+  if (name === 'check_catalog_match') {
+    return checkCatalogMatch(input.description || '', ctx);
+  }
+
   return 'Unknown tool.';
+}
+
+// ── Catalog duplicate check (Jaccard on token sets) ──────────────
+// Threshold 0.4: v1 heuristic. Below that, shared words are often generic
+// ("can", "label", color). Above, we'd miss legitimate duplicates that reuse
+// only the distinctive tokens (brand + product). Tune by feel.
+var STOP_WORDS = {
+  a: 1, an: 1, the: 1, of: 1, with: 1, and: 1, or: 1, is: 1, it: 1, its: 1,
+  in: 1, on: 1, at: 1, to: 1, for: 1, from: 1, this: 1, that: 1, these: 1,
+  those: 1, visible: 1, front: 1, back: 1, side: 1, clear: 1, partial: 1,
+  can: 1, tin: 1, container: 1, label: 1
+};
+
+function tokenize(s) {
+  if (!s) return [];
+  var toks = s.toLowerCase().replace(/[^a-z0-9\s']/g, ' ').split(/\s+/);
+  var out = {};
+  for (var i = 0; i < toks.length; i++) {
+    var t = toks[i];
+    if (t && t.length > 1 && !STOP_WORDS[t]) out[t] = 1;
+  }
+  return out;
+}
+
+function jaccard(a, b) {
+  var inter = 0, union = 0;
+  var shared = [];
+  for (var k in a) {
+    union++;
+    if (b[k]) { inter++; shared.push(k); }
+  }
+  for (var k2 in b) { if (!a[k2]) union++; }
+  return { score: union === 0 ? 0 : inter / union, shared: shared };
+}
+
+function checkCatalogMatch(description, ctx) {
+  var caps = ctx.captures || [];
+  if (caps.length === 0 || !description.trim()) return { match: false };
+  var candTokens = tokenize(description);
+  var best = { score: 0, entry: null, shared: [] };
+  for (var i = 0; i < caps.length; i++) {
+    var c = caps[i];
+    var entryTokens = tokenize((c.label || '') + ' ' + (c.description || ''));
+    var j = jaccard(candTokens, entryTokens);
+    if (j.score > best.score) {
+      best = { score: j.score, entry: c, shared: j.shared };
+    }
+  }
+  if (best.score >= 0.4 && best.entry) {
+    return {
+      match: true,
+      entry: { label: best.entry.label, description: best.entry.description || '', time: best.entry.time },
+      reason: 'tokens overlap {' + best.shared.join(', ') + '}, ' + best.score.toFixed(2) + ' similarity'
+    };
+  }
+  return { match: false };
 }
 
 async function captureWithValidation(label, description, ctx) {
@@ -69,7 +167,7 @@ async function captureWithValidation(label, description, ctx) {
       var imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
       var image = new ctx.vlm.RawImage(imageData.data, canvas.width, canvas.height, 4);
       var valMessages = [
-        { role: 'user', content: [{ type: 'image' }, { type: 'text', text: `Is there a ${TARGET_CATEGORY} in this image? Answer YES or NO only.` }] }
+        { role: 'user', content: [{ type: 'image' }, { type: 'text', text: `Does this image contain any ${TARGET_CATEGORY}? Answer YES or NO only.` }] }
       ];
       var chatPrompt = ctx.vlm.processor.apply_chat_template(valMessages, { add_generation_prompt: true });
       var inputs = await ctx.vlm.processor(image, chatPrompt, { add_special_tokens: false });

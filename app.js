@@ -951,7 +951,38 @@ function handlePeerData(data) {
     agentMemory = data.entries || [];
     renderMemory();
   }
+
+  if (data.type === 'operator_message') {
+    // Only the phone side renders overlays on its live camera feed.
+    if (!isMobileDevice) return;
+    showOperatorOverlay(data.text || '');
+  }
 }
+
+// ── Operator overlay (phone side) ───────────────────────────────
+
+var _operatorOverlayTimer = null;
+function showOperatorOverlay(text) {
+  var el = document.getElementById('operator-overlay');
+  if (!el || !text) return;
+  el.textContent = text;
+  el.classList.remove('fade-out');
+  el.classList.add('visible');
+  if (_operatorOverlayTimer) clearTimeout(_operatorOverlayTimer);
+  _operatorOverlayTimer = setTimeout(function () {
+    el.classList.add('fade-out');
+    el.classList.remove('visible');
+  }, 4000);
+}
+
+function dismissOperatorOverlay() {
+  var el = document.getElementById('operator-overlay');
+  if (!el) return;
+  if (_operatorOverlayTimer) { clearTimeout(_operatorOverlayTimer); _operatorOverlayTimer = null; }
+  el.classList.add('fade-out');
+  el.classList.remove('visible');
+}
+window.dismissOperatorOverlay = dismissOperatorOverlay;
 
 // ── Disconnect ──────────────────────────────────────────────────
 
