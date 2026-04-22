@@ -4,24 +4,35 @@
 // Desktop creates a room. Phone joins it via QR code.
 
 var SIGNAL_URL = 'wss://signal.neevs.io';
-// Google + Cloudflare STUN for zero-roundtrip local/near-direct paths.
-// openrelay.metered.ca is a public, shared TURN relay on generic
-// "openrelayproject" credentials. Best-effort uptime, fine for the
-// classroom demo. Swap for a private TURN key if quota bites.
-// Ports the pattern from aipi540-tabletop-perception/public/webrtc.js.
-var ICE_SERVERS = [
+// proxy.neevs.io mints short-lived Cloudflare Realtime TURN creds. STUN
+// stays in-line as a zero-roundtrip fallback so a degraded proxy still
+// gives us STUN-only pairing instead of nothing. Same pattern as
+// better-robotics/public/pairing.js.
+var TURN_ENDPOINT = 'https://proxy.neevs.io/cloudflare/turn';
+var STUN_FALLBACK = [
   { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'stun:stun.cloudflare.com:3478' },
-  {
-    urls: [
-      'turn:openrelay.metered.ca:80',
-      'turn:openrelay.metered.ca:443',
-      'turn:openrelay.metered.ca:443?transport=tcp'
-    ],
-    username: 'openrelayproject',
-    credential: 'openrelayproject'
-  }
+  { urls: 'stun:stun.cloudflare.com:3478' }
 ];
+
+var _iceServersPromise = null;
+function getIceServers() {
+  if (_iceServersPromise) return _iceServersPromise;
+  _iceServersPromise = fetch(TURN_ENDPOINT, { method: 'POST' })
+    .then(function (r) {
+      if (!r.ok) throw new Error('turn: ' + r.status);
+      return r.json();
+    })
+    .then(function (data) {
+      var servers = (data && data.iceServers) || [];
+      console.log('[peer] TURN: fetched', servers.length, 'server(s)');
+      return STUN_FALLBACK.concat(servers);
+    })
+    .catch(function (err) {
+      console.warn('[peer] TURN: fetch failed, STUN-only:', err && err.message || err);
+      return STUN_FALLBACK.slice();
+    });
+  return _iceServersPromise;
+}
 
 var SEND_BUFFER_MAX = 1024 * 1024; // 1MB backpressure threshold
 var SEND_QUEUE = [];
@@ -148,8 +159,9 @@ function handleSignal(data) {
 
   if (data.offer) {
     console.log('[peer] Received offer');
-    createPeerConnection();
-    pc.setRemoteDescription(new RTCSessionDescription(data.offer))
+    createPeerConnection().then(function () {
+      return pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+    })
       .then(function () {
         // Flush queued ICE candidates
         pendingIce.forEach(function (c) { pc.addIceCandidate(c).catch(function () {}); });
@@ -195,8 +207,13 @@ function createPeerConnection() {
   if (pc) { try { pc.close(); } catch (_) {} }
   pendingIce = [];
 
-  pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+  return getIceServers().then(function (iceServers) {
+    pc = new RTCPeerConnection({ iceServers: iceServers });
+    wirePeerConnection();
+  });
+}
 
+function wirePeerConnection() {
   pc.onicecandidate = function (e) {
     if (e.candidate) sendSignal({ ice: e.candidate });
   };
@@ -255,16 +272,16 @@ function createPeerConnection() {
 function createOffer(ctx) {
   // Wait for camera stream before creating offer
   function doOffer() {
-    createPeerConnection();
+    createPeerConnection().then(function () {
+      var channel = pc.createDataChannel('tallyho', { ordered: true });
+      setupDataChannel(channel);
 
-    var channel = pc.createDataChannel('tallyho', { ordered: true });
-    setupDataChannel(channel);
+      var stream = ctx.getLocalStream();
+      if (stream) stream.getTracks().forEach(function (t) { pc.addTrack(t, stream); });
 
-    var stream = ctx.getLocalStream();
-    if (stream) stream.getTracks().forEach(function (t) { pc.addTrack(t, stream); });
-
-    console.log('[peer] createOffer starting; stream=', !!stream);
-    pc.createOffer()
+      console.log('[peer] createOffer starting; stream=', !!stream);
+      return pc.createOffer();
+    })
       .then(function (offer) {
         return pc.setLocalDescription(offer).then(function () {
           console.log('[peer] offer set as local, sending');
