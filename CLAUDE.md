@@ -29,22 +29,19 @@ scripts/
 
 ## Architecture
 
-Phone streams camera via WebRTC (PeerJS) to desktop. Desktop runs LFM2.5-VL-450M via WebGPU for continuous scene description. When a cat is detected, Claude reasons about the VLM output, can change the VLM prompt for detail, check the image directly, and capture/identify the cat (Oscar or Maomao).
+Phone streams camera via WebRTC (raw, signal.neevs.io for signaling) to desktop. Desktop runs LFM2.5-VL-450M via WebGPU and emits a caption every ~2s. A keyword gate (`TARGET_PATTERN` in `app.js`) decides when the caption is worth waking Claude; otherwise the caption is discarded and the VLM keeps looping. When the gate fires, Claude reads the caption and picks from the tools listed in `src/tools.js`: redirect the VLM with a neutral observation directive, pull the raw frame for direct inspection, or record a catalog entry. The signature behavior is refusal. Most gate firings end with Claude deciding the frame is not actually in-category and logging a short rejection reason to scene memory instead of capturing. A scented candle shaped like a can of corn, matching on shape, color, and label text, is the canonical rejection. This capacity for semantic refusal is the asymmetry that distinguishes the DL arm from the classical arm, which has no path to say "shaped like a can but not a can".
 
-## Tools (4)
+## Tools
 
-- `set_vlm_prompt` — change what the VLM looks for
-- `capture_frame` — save frame with VLM validation
-- `check_image` — send frame to Claude for direct visual analysis
-- `update_memory` — persist observations across detection cycles
+See `src/tools.js` for the live set of tool definitions. Each tool's description is the contract Claude sees. Planned additions tracked in README: `guide_operator` (push overlay messages to the phone) and `check_catalog_match` (dedup against already-catalogued entries).
 
 ## Requirements
 
-- Agent loop is hand-written (src/agent.js) — no LangChain, CrewAI, or similar
+- Agent loop is hand-written (src/agent.js) with no LangChain, CrewAI, or similar
 - LLM provider selected at runtime: pasted Claude token (via proxy.neevs.io) OR GitHub Models (gpt-4o)
-- 4 tools the agent can call
+- Tools live in `src/tools.js`; count is not a constraint
 - Web UI with P2P video streaming, agent log, captures diary
-- Quantitative evaluation with defined metric and results
+- Quantitative evaluation with defined metric and results, DL arm vs. classical arm on the same dataset
 
 ## Deploy
 

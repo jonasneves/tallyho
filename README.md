@@ -10,45 +10,66 @@ AIPI 590.03 Intelligent Agents — Project 2.
 
 > **Status: in development.** Forked from catwatcher on 2026-04-22. Agent logic, tools, and eval dataset are still catwatcher-shaped as of this commit. Cataloger generalization is underway across subsequent slices.
 
-A visual cataloger that walks through a scene with you, looks through your phone's camera, and builds a structured inventory of a target category (cans, for the Project 2 demo). A small VLM (LFM2.5-VL-450M, 450M params) runs in-browser via WebGPU for continuous perception. Claude reasons about the VLM output, guides the operator to get better angles, and records catalog entries as it goes.
+Hold up a Trader Joe's Corn Scented Candle (yellow cylinder, label prints "CAN OF CORN") and ask TallyHo to add it to your pantry inventory. The deep-learning arm refuses: the VLM captions the object faithfully as a candle, and Claude declines to catalog it. The classical arm is expected to accept it as a can: HSV says yellow, contours say cylinder, Tesseract reads the literal word "CAN". Three classical signals align on the wrong answer. That asymmetry is the finding. The deep-learning edge here is not detection speed but semantic refusal. TallyHo is a visual cataloger that walks through a scene via your phone's camera and builds a structured inventory of a target category (cans, for the Project 2 demo).
 
 Three-component agent per the Project 2 rubric:
 - **Perception** — VLM describes each frame (non-text modality: live camera via WebRTC)
 - **Planning** — Claude decides whether a frame contains a catalog-worthy instance, what angle to request next, and when an entry is complete
 - **Control** — human operator holding the phone, steered by overlay prompts
 
-Two versions run against the same eval harness: a deep-learning arm (VLM + Claude) and a classical arm (HSV + contours + Tesseract legacy OCR), compared on the same dataset.
+## Architecture
 
-## How it works
+```
+┌──────────────────┐      WebRTC video (phone → desktop)     ┌──────────────────────┐
+│  Phone (sensor)  │ ──────────────────────────────────────► │   Desktop (brain)    │
+│  rear camera     │                                         │                      │
+│  overlay surface │ ◄────────────────── data channel ────── │   LFM2.5-VL-450M     │
+└──────────────────┘   "step closer" · "rotate" · "logged"   │   (WebGPU, ~2s/frame)│
+                                                             │          │           │
+                                                             │          ▼ caption   │
+                                                             │   Claude Sonnet      │
+                                                             │   tool-calling       │
+                                                             │   log · re-look · reject
+                                                             └──────────────────────┘
+```
 
-1. Phone streams camera via WebRTC (raw, with `signal.neevs.io` for signaling) to desktop browser
-2. Desktop runs the VLM continuously, describing each frame at ~2s cycle
-3. Claude reads the description, decides whether an item of the target category is present, can ask the VLM for detail (prompt switching) or look at the frame directly
-4. When more information would help, Claude guides the operator via overlay messages on the phone (closer, rotate, show label)
-5. When an entry is complete and not a duplicate of one already catalogued, it is recorded
-6. Camera source selector: process local webcam, remote phone, or both
+Neither device can do the task alone. The phone owns the sensor and the operator interface; the desktop owns the compute (WebGPU VLM) and the reasoning (Claude).
+
+### Two arms
+
+Two implementations run against the same eval harness and the same target category, compared side-by-side.
+
+| Axis | DL arm | Classical arm |
+|---|---|---|
+| Perception | LFM2.5-VL-450M (WebGPU, in-browser) | HSV histogram + contours (OpenCV.js) |
+| Planning | Claude Sonnet, tool-calling | rule-based scoring |
+| OCR | VLM caption | Tesseract legacy |
+| Retargeting | one-constant change | cans-only |
+| Candle | **refuses** (semantic) | **catalogs** (surface features match) |
 
 ## Tools
 
-| Tool | Description |
-|------|-------------|
-| `set_vlm_prompt` | Change what the VLM looks for (adaptive prompting) |
-| `capture_frame` | Save the current frame with VLM validation |
-| `check_image` | Send frame to Claude for direct visual analysis |
-| `update_memory` | Persist observations across detection cycles |
-
-Planned: `guide_operator` (push an overlay message to the phone camera) and `check_catalog_match` (dedup against already-catalogued entries).
+| Tool | Status | Description |
+|---|---|---|
+| `set_vlm_prompt` | shipped | Change what the VLM looks for (adaptive prompting) |
+| `capture_frame` | shipped | Save the current frame with VLM validation |
+| `check_image` | shipped | Send frame to Claude for direct visual analysis |
+| `update_memory` | shipped | Persist observations across detection cycles |
+| `guide_operator` | planned | Push an overlay message to the phone camera |
+| `check_catalog_match` | planned | Dedup against already-catalogued entries |
 
 ## Project structure
 
 ```
 index.html              UI entry point
 style.css               styles
-app.js                  entry point (P2P, VLM, UI)
+app.js                  entry point (VLM loop, UI, camera source)
 src/
+  peer.js               WebRTC pairing, signaling, data channel
   agent.js              agent loop (Claude API, reasoning, memory)
   tools.js              tool definitions and execution
-  eval.js               evaluation logic
+  eval.js               evaluation harness (JS)
+  eval.py               evaluation harness (Python)
 data/eval/              evaluation dataset
 results/eval/           scores.json (committed)
 ```
@@ -78,15 +99,15 @@ URL state:
 
 ## Evaluation
 
-~30 scenarios targeting cans, across five categories:
+~30 scenarios targeting cans, across five categories. Both arms run through the same harness.
 
-- **Clear** — unambiguous instances, good lighting, label visible
-- **Adversarial** — VLM-likely hallucinations (wrong material, wrong shape language)
-- **Occluded** — partial views, glare, hand-in-frame
-- **Duplicate** — same instance seen again, should not produce a second catalog entry
-- **Negative** — scenes with no target; false-positive rate should be zero
-
-Both arms (DL and classical) run through the same harness.
+| Category | What it tests | Minimum N |
+|---|---|---|
+| Clear | basic detection | 10 |
+| Adversarial | **semantic refusal (the candle row lives here)** | 10 |
+| Occluded | perception robustness | 10 |
+| Duplicate | dedup | 10 |
+| Negative | false-positive rate | 10 |
 
 ```sh
 make eval
@@ -95,7 +116,15 @@ make eval
 
 ### Results
 
-TBD after Slice D. Current `results/eval/scores.json` reflects the inherited catwatcher run and does not describe TallyHo.
+Live numbers land after Slice D. Current `results/eval/scores.json` reflects the inherited catwatcher run and does not describe TallyHo.
+
+| Metric | DL arm | Classical arm |
+|---|---|---|
+| Overall accuracy | — | — |
+| Adversarial (candle) | — | — |
+| False positive rate | — | — |
+| Avg tokens per entry | — | n/a |
+| Avg latency per entry | — | — |
 
 **Known limitation**: when the VLM misidentifies a can as another object (e.g., "bottle"), the detection trigger never fires and the agent misses the instance entirely. This is the most teachable failure mode of the DL arm, and part of why the classical arm exists as a comparison.
 
