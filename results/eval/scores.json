@@ -1,0 +1,137 @@
+{
+  "overall_accuracy": 0,
+  "total_samples": 28,
+  "correct": 0,
+  "per_cat": {
+    "Oscar": {
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    },
+    "Maomao": {
+      "precision": 0,
+      "recall": 0,
+      "f1": 0
+    }
+  },
+  "per_category": {},
+  "efficiency": {
+    "avg_tokens": 0,
+    "avg_api_calls": 0
+  },
+  "false_positive_rate": 0,
+  "results": [
+    {
+      "id": "clear_maomao_fluffy",
+      "error": "fetch failed"
+    },
+    {
+      "id": "clear_maomao_box",
+      "error": "fetch failed"
+    },
+    {
+      "id": "clear_maomao_cattree",
+      "error": "fetch failed"
+    },
+    {
+      "id": "clear_oscar_short",
+      "error": "fetch failed"
+    },
+    {
+      "id": "clear_oscar_napping",
+      "error": "fetch failed"
+    },
+    {
+      "id": "clear_oscar_jumping",
+      "error": "fetch failed"
+    },
+    {
+      "id": "ambiguous_just_cat",
+      "error": "fetch failed"
+    },
+    {
+      "id": "ambiguous_black_cat",
+      "error": "fetch failed"
+    },
+    {
+      "id": "ambiguous_feeder",
+      "error": "fetch failed"
+    },
+    {
+      "id": "ambiguous_gray_cat_only",
+      "error": "fetch failed"
+    },
+    {
+      "id": "ambiguous_cat_behind_furniture",
+      "error": "fetch failed"
+    },
+    {
+      "id": "adversarial_brown_fluffy",
+      "error": "fetch failed"
+    },
+    {
+      "id": "adversarial_brown_short",
+      "error": "fetch failed"
+    },
+    {
+      "id": "adversarial_tortoiseshell",
+      "error": "fetch failed"
+    },
+    {
+      "id": "adversarial_white_gray",
+      "error": "fetch failed"
+    },
+    {
+      "id": "adversarial_contradictory_vlm",
+      "error": "fetch failed"
+    },
+    {
+      "id": "adversarial_medium_fur",
+      "error": "fetch failed"
+    },
+    {
+      "id": "hard_no_fur_detail_oscar",
+      "error": "fetch failed"
+    },
+    {
+      "id": "hard_no_fur_detail_maomao",
+      "error": "fetch failed"
+    },
+    {
+      "id": "hard_vlm_says_dog",
+      "error": "fetch failed"
+    },
+    {
+      "id": "hard_two_cats_vague",
+      "error": "fetch failed"
+    },
+    {
+      "id": "hard_blurry_partial",
+      "error": "fetch failed"
+    },
+    {
+      "id": "hard_unknown_cat",
+      "error": "fetch failed"
+    },
+    {
+      "id": "hard_cat_mentioned_but_absent",
+      "error": "fetch failed"
+    },
+    {
+      "id": "no_cat_kitchen",
+      "error": "fetch failed"
+    },
+    {
+      "id": "no_cat_living_room",
+      "error": "fetch failed"
+    },
+    {
+      "id": "no_cat_dark",
+      "error": "fetch failed"
+    },
+    {
+      "id": "no_cat_cattree_empty",
+      "error": "fetch failed"
+    }
+  ]
+}

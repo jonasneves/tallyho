@@ -1,0 +1,226 @@
+[
+  {
+    "id": "clear_maomao_fluffy",
+    "category": "clear",
+    "vlm_text": "The image shows a fluffy cat lying on a light brown wooden floor in a room with white walls. The cat has a mix of brown, black, and white fur, with a fluffy tail and a white chest. It's stretched out in a relaxed position, looking up at the camera.",
+    "ground_truth": "Maomao",
+    "follow_up": null,
+    "check_image_description": null
+  },
+  {
+    "id": "clear_maomao_box",
+    "category": "clear",
+    "vlm_text": "The image shows a fluffy gray and white cat sitting inside an open cardboard box on a light gray wooden floor. The box is filled with brown paper, creating a cozy nest for the cat. The cat's eyes are wide open, giving it a curious and alert expression.",
+    "ground_truth": "Maomao",
+    "follow_up": null,
+    "check_image_description": null
+  },
+  {
+    "id": "clear_maomao_cattree",
+    "category": "clear",
+    "vlm_text": "The room features a cat tree with a cat perched on it. The cat appears to have long, fluffy fur and is watching outside through the window. A ceiling fan is mounted on the ceiling.",
+    "ground_truth": "Maomao",
+    "follow_up": null,
+    "check_image_description": null
+  },
+  {
+    "id": "clear_oscar_short",
+    "category": "clear",
+    "vlm_text": "A dark gray cat with short smooth fur is sitting on the wooden floor near a cardboard box. The cat is looking directly at the camera with alert green eyes.",
+    "ground_truth": "Oscar",
+    "follow_up": null,
+    "check_image_description": null
+  },
+  {
+    "id": "clear_oscar_napping",
+    "category": "clear",
+    "vlm_text": "The image shows a gray cat with short fur curled up on a brown cushion. The cat appears to be napping. In the background there is a window and a green couch.",
+    "ground_truth": "Oscar",
+    "follow_up": null,
+    "check_image_description": null
+  },
+  {
+    "id": "clear_oscar_jumping",
+    "category": "clear",
+    "vlm_text": "The image shows a cat in mid-air, captured in a dynamic pose as it jumps. The cat has a dark gray coat with short smooth fur. The scene takes place indoors on a light-colored wooden floor.",
+    "ground_truth": "Oscar",
+    "follow_up": null,
+    "check_image_description": null
+  },
+  {
+    "id": "ambiguous_just_cat",
+    "category": "ambiguous",
+    "vlm_text": "The image shows a cozy living room with a wooden floor and white walls. A cat is comfortably resting on the ottoman. A cardboard box is visible on the floor.",
+    "ground_truth": "Oscar",
+    "follow_up": "The cat has short, smooth gray fur. It appears to be a domestic short-haired cat.",
+    "check_image_description": "A dark charcoal gray cat with short smooth fur lying on a brown ottoman."
+  },
+  {
+    "id": "ambiguous_black_cat",
+    "category": "ambiguous",
+    "vlm_text": "The room features a cat tree with a cat perched on it, suggesting it's a space for pets. A small black cat is visible in the corner.",
+    "ground_truth": "Maomao",
+    "follow_up": "The cat's fur appears to be long and fluffy, with a soft texture.",
+    "check_image_description": "A light silvery gray cat with long fluffy fur perched on top of a cat tree near a window."
+  },
+  {
+    "id": "ambiguous_feeder",
+    "category": "ambiguous",
+    "vlm_text": "A cat is eating from the automatic feeder on the floor near the wall. A cardboard box is nearby. The lighting is dim with evening light through the window.",
+    "ground_truth": "Maomao",
+    "follow_up": "The cat has long, fluffy fur that appears soft and well-groomed.",
+    "check_image_description": "A light silvery gray cat with long fluffy fur eating from an automatic feeder."
+  },
+  {
+    "id": "ambiguous_gray_cat_only",
+    "category": "ambiguous",
+    "vlm_text": "A gray cat is sitting on the floor near the window. The room is well lit with natural light.",
+    "ground_truth": "Oscar",
+    "follow_up": "The cat appears to have short fur.",
+    "check_image_description": "A dark charcoal gray cat with short smooth fur sitting near a window."
+  },
+  {
+    "id": "ambiguous_cat_behind_furniture",
+    "category": "ambiguous",
+    "vlm_text": "There appears to be a cat partially hidden behind the couch. Only the head and part of the body are visible. The cat has gray fur.",
+    "ground_truth": "Maomao",
+    "follow_up": "The visible fur appears to be long and somewhat fluffy.",
+    "check_image_description": "A light silvery gray cat with long fluffy fur peeking out from behind the couch."
+  },
+  {
+    "id": "adversarial_brown_fluffy",
+    "category": "adversarial",
+    "vlm_text": "The image shows a room with a cat. The cat has a mix of brown and gray fur, with a fluffy texture. It has a medium-length coat that appears soft and well-groomed.",
+    "ground_truth": "Maomao",
+    "follow_up": "The cat's fur is primarily brownish or warm-toned, with a mix of light and dark shades. It appears to have a fluffy texture.",
+    "check_image_description": "A light silvery gray cat with long fluffy fur sitting on the floor. The warm indoor lighting gives the fur a slightly brownish cast."
+  },
+  {
+    "id": "adversarial_brown_short",
+    "category": "adversarial",
+    "vlm_text": "A brown cat with short fur is sitting near the automatic feeder. The cat appears to be eating. The floor is light colored wood.",
+    "ground_truth": "Oscar",
+    "follow_up": "The cat has short, smooth fur with a dark gray coloration.",
+    "check_image_description": "A dark charcoal gray cat with short smooth fur eating from an automatic feeder on a wooden floor."
+  },
+  {
+    "id": "adversarial_tortoiseshell",
+    "category": "adversarial",
+    "vlm_text": "The image shows a fluffy cat as the main subject. The cat is lying on a gray wooden floor, appearing relaxed. It has a tortoiseshell mix of brown, black, and white fur with a fluffy tail.",
+    "ground_truth": "Maomao",
+    "follow_up": null,
+    "check_image_description": "A light silvery gray cat with long fluffy fur stretched out on the wooden floor."
+  },
+  {
+    "id": "adversarial_white_gray",
+    "category": "adversarial",
+    "vlm_text": "The image shows a cat with a mix of white, gray, and black fur. The cat has a distinctive black tail. It's looking directly at the camera with a curious expression.",
+    "ground_truth": "Maomao",
+    "follow_up": "The fur appears to be long and fluffy with a predominantly light gray coloration.",
+    "check_image_description": "A light silvery gray cat with long fluffy fur looking at the camera."
+  },
+  {
+    "id": "adversarial_contradictory_vlm",
+    "category": "adversarial",
+    "vlm_text": "The image shows a cat with short, smooth brown fur lying on the floor. The cat appears to be quite large with a thick coat.",
+    "ground_truth": "Oscar",
+    "follow_up": "The cat has brown fur that is short and smooth to the touch.",
+    "check_image_description": "A dark charcoal gray cat with short smooth fur lying on the floor."
+  },
+  {
+    "id": "adversarial_medium_fur",
+    "category": "adversarial",
+    "vlm_text": "A gray cat with medium-length fur is sitting on the cat tree. The fur doesn't appear particularly short or long.",
+    "ground_truth": "Maomao",
+    "follow_up": "The fur is medium to long, with some fluffiness visible around the chest.",
+    "check_image_description": "A light silvery gray cat with long fluffy fur on the cat tree."
+  },
+  {
+    "id": "hard_no_fur_detail_oscar",
+    "category": "hard",
+    "vlm_text": "The image shows a cat sitting near the window. The cat appears to be gray. There is a cardboard box nearby and the room has wooden flooring.",
+    "ground_truth": "Oscar",
+    "follow_up": "The cat has short gray fur.",
+    "check_image_description": "A dark charcoal gray cat with short smooth fur near the window."
+  },
+  {
+    "id": "hard_no_fur_detail_maomao",
+    "category": "hard",
+    "vlm_text": "A gray cat is lying on the couch in the living room. The room has white walls and a large window.",
+    "ground_truth": "Maomao",
+    "follow_up": "The cat has light gray fur that appears soft.",
+    "check_image_description": "A light silvery gray cat with long fluffy fur on the couch."
+  },
+  {
+    "id": "hard_vlm_says_dog",
+    "category": "hard",
+    "vlm_text": "The image shows a small gray dog lying on the wooden floor near a cardboard box. The animal appears to be resting comfortably.",
+    "ground_truth": "Oscar",
+    "follow_up": "The animal has short, smooth gray fur. It appears to be a cat, not a dog.",
+    "check_image_description": "A dark charcoal gray cat with short smooth fur lying on the floor. The VLM incorrectly identified it as a dog."
+  },
+  {
+    "id": "hard_two_cats_vague",
+    "category": "hard",
+    "vlm_text": "There are two cats in the room. One is on the cat tree and one is on the floor near the feeder. Both appear to be gray.",
+    "ground_truth": "both",
+    "follow_up": null,
+    "check_image_description": "Two cats: a light silvery gray fluffy cat on the cat tree, and a dark charcoal gray short-haired cat on the floor."
+  },
+  {
+    "id": "hard_blurry_partial",
+    "category": "hard",
+    "vlm_text": "The image is somewhat blurry. There appears to be a gray shape in the corner that could be a cat or a piece of furniture. The rest of the room shows a wooden floor and white walls.",
+    "ground_truth": null,
+    "follow_up": "The gray shape is difficult to identify. It could be a cat or a cushion.",
+    "check_image_description": "A blurry image showing what appears to be a gray cushion on the floor, not a cat."
+  },
+  {
+    "id": "hard_unknown_cat",
+    "category": "hard",
+    "vlm_text": "The image shows an orange tabby cat sitting on the windowsill. The cat has distinctive striped markings and medium-length fur.",
+    "ground_truth": null,
+    "follow_up": null,
+    "check_image_description": "An orange tabby cat with striped markings. This is neither Oscar nor Maomao."
+  },
+  {
+    "id": "hard_cat_mentioned_but_absent",
+    "category": "hard",
+    "vlm_text": "The living room has a cat tree near the window, a green couch, and a cardboard box on the floor. A cat toy is visible near the feeder. The room appears to be set up for cats but no animals are currently visible.",
+    "ground_truth": null,
+    "follow_up": null,
+    "check_image_description": null
+  },
+  {
+    "id": "no_cat_kitchen",
+    "category": "no_cat",
+    "vlm_text": "The image shows a modern kitchen with a sleek, dark blue cabinetry. The floor is made of light gray wood. On the countertop, there's a silver coffee maker and a black coffee pot. A small yellow object is visible on the floor.",
+    "ground_truth": null,
+    "follow_up": null,
+    "check_image_description": null
+  },
+  {
+    "id": "no_cat_living_room",
+    "category": "no_cat",
+    "vlm_text": "The image shows a cozy living room with a large window offering a view of green trees. The focal point is a green couch with wooden legs. In front of the couch is a wooden coffee table. The floor is made of light brown wooden planks.",
+    "ground_truth": null,
+    "follow_up": null,
+    "check_image_description": null
+  },
+  {
+    "id": "no_cat_dark",
+    "category": "no_cat",
+    "vlm_text": "The image is completely black with no visible objects or details. It appears to be a solid black rectangle with no texture or variation in color.",
+    "ground_truth": null,
+    "follow_up": null,
+    "check_image_description": null
+  },
+  {
+    "id": "no_cat_cattree_empty",
+    "category": "no_cat",
+    "vlm_text": "The image shows a living room with a cat tree positioned near a large window. The cat tree has a white base and multiple platforms. No animals are visible. The floor is wooden and there is a green couch against the wall.",
+    "ground_truth": null,
+    "follow_up": null,
+    "check_image_description": null
+  }
+]

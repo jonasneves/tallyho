@@ -1,0 +1,15 @@
+node_modules/
+.DS_Store
+.env
+
+# Evaluation predictions (large) — scores.json is committed
+results/eval/predictions.json
+
+# Model weights / caches
+*.safetensors
+.cache/
+demo/
+tallyho-demo.mov
+
+# Local Claude Code settings
+.claude/settings.local.json

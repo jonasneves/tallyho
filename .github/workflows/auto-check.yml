@@ -1,0 +1,42 @@
+name: Auto-check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  auto-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run auto-check
+        run: python3 scripts/auto_check.py
+
+      - name: Write job summary
+        run: |
+          echo "## Requirements Checklist" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat .github/REQUIREMENTS_CHECKLIST.md >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "[View live app](https://neevs.io/tallyho/)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Commit if checklist changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/REQUIREMENTS_CHECKLIST.md
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: auto-mark completed checklist items"
+            git push
+          fi

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>" />
+  <title>TallyHo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header" role="banner">
+    <a class="site-title" href="#" onclick="goHome(); return false;" aria-label="TallyHo home">
+      <span class="title-cat">Tally</span><span class="title-watcher">Ho</span>
+    </a>
+    <div class="header-auth" id="header-auth"></div>
+  </header>
+
+  <!-- Lobby: one action -->
+  <main id="screen-lobby" class="screen active" role="main">
+    <div class="lobby-inner">
+      <span class="lobby-icon" aria-hidden="true">🐱</span>
+      <h1 class="lobby-title"><span class="title-cat">Cat</span><span class="title-watcher">Watcher</span></h1>
+      <p class="lobby-sub">Identifies your cats by name from a live camera feed</p>
+      <p class="lobby-detail">A small vision model runs in your browser for continuous perception. An LLM reasons only when a cat is detected.</p>
+
+      <!-- Desktop: primary action is start -->
+      <button class="btn btn-start desktop-only" onclick="startApp()" aria-label="Start camera feed">Start Camera</button>
+
+      <!-- Mobile: primary action is scan to connect -->
+      <div class="mobile-only mobile-connect">
+        <div class="video-wrap" id="scanner-wrap-mobile" role="img" aria-label="QR code scanner viewfinder">
+          <video id="scanner-video-mobile" autoplay playsinline muted aria-hidden="true"></video>
+          <canvas id="scanner-canvas-mobile" style="display:none"></canvas>
+        </div>
+        <p class="scan-hint">Scan the QR code shown on your computer</p>
+        <div class="field">
+          <label>Or type a peer ID</label>
+          <input id="manual-peer-mobile" placeholder="e.g. abc123" maxlength="8" aria-label="Peer ID" />
+        </div>
+        <button class="btn" onclick="connectFromMobile()">Connect</button>
+      </div>
+
+      <details class="settings-section" id="cat-settings" aria-label="Cat profile settings">
+        <summary>My cats</summary>
+        <div class="settings-body">
+          <div class="cat-profile" data-index="0">
+            <div class="field">
+              <label>Name</label>
+              <input class="cat-name" placeholder="e.g. Oscar" />
+            </div>
+            <div class="field">
+              <label>Description (fur color, length, distinguishing features)</label>
+              <input class="cat-desc" placeholder="e.g. dark charcoal gray, short smooth fur" />
+            </div>
+          </div>
+          <div class="cat-profile" data-index="1">
+            <div class="field">
+              <label>Name</label>
+              <input class="cat-name" placeholder="e.g. Maomao" />
+            </div>
+            <div class="field">
+              <label>Description</label>
+              <input class="cat-desc" placeholder="e.g. light silvery gray, long fluffy fur" />
+            </div>
+          </div>
+          <button class="btn-add-cat" onclick="addCatProfile()" aria-label="Add another cat profile">+ Add another cat</button>
+        </div>
+      </details>
+
+      <div class="phone-connect desktop-only">
+        <span class="phone-connect-label">Use your phone as a second camera <span class="optional-tag">optional</span></span>
+        <span class="phone-connect-hint">Scan from your phone to stream its camera wirelessly</span>
+        <div class="qr-lobby" id="my-qr"></div>
+        <span class="peer-display" id="my-peer-display"></span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Live -->
+  <div id="screen-live" class="screen">
+    <div class="live-layout">
+
+      <!-- Perception layer: cameras, then VLM caption below -->
+      <div class="perception-layer">
+        <div class="live-main">
+          <div class="status-bar">
+            <span class="status-dot" id="live-dot" aria-hidden="true"></span>
+            <span id="live-status" role="status" aria-live="polite">Starting...</span>
+          </div>
+          <!-- Mobile: own camera -->
+          <div class="video-wrap mobile-only" id="mobile-camera-wrap">
+            <video id="mobile-camera" autoplay playsinline muted></video>
+          </div>
+          <!-- Desktop: cameras -->
+          <div class="camera-area desktop-only">
+            <div class="qr-badge" id="qr-badge">
+              <div class="qr-tiny" id="live-qr"></div>
+              <span class="qr-badge-text">+ camera</span>
+            </div>
+            <div class="camera-grid" id="camera-grid">
+              <div class="camera-feed camera-feed-full" id="feed-local">
+                <video id="local-video" autoplay playsinline muted></video>
+                <span class="camera-label">Local</span>
+              </div>
+              <div class="camera-feed" id="feed-remote" style="display:none">
+                <video id="remote-video" autoplay playsinline></video>
+                <span class="camera-label">Remote</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="vlm-panel desktop-only">
+          <div class="vlm-header">
+            <span>LFM2.5-VL-450M</span>
+            <span class="vlm-badge" id="vlm-badge"></span>
+          </div>
+          <div class="vlm-body" id="vlm-body"></div>
+        </div>
+      </div>
+
+      <!-- Reasoning layer: agent, memory, captures -->
+      <div class="reasoning-layer">
+        <div id="agent-panel"></div>
+
+        <div class="memory-panel">
+          <div class="panel-header">
+            <span>Memory</span>
+            <span class="panel-header-actions">
+              <span class="memory-count" id="memory-count">0</span>
+              <button class="copy-btn" id="memory-clear" onclick="clearMemory()" style="display:none">Clear</button>
+            </span>
+          </div>
+          <div class="memory-list" id="memory-list">
+            <div class="memory-empty" aria-live="polite">No observations yet</div>
+          </div>
+        </div>
+
+        <div class="captures-panel" id="captures-panel" style="display:none">
+          <div class="panel-header">
+            <span>Captures</span>
+            <span class="panel-header-actions">
+              <span class="memory-count" id="captures-count">0</span>
+              <button class="copy-btn" onclick="clearCaptures()">Clear</button>
+            </span>
+          </div>
+          <div id="captures"></div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <button class="btn btn-disconnect" onclick="disconnect()" aria-label="Disconnect and return to lobby">Disconnect</button>
+  </div>
+
+  <div id="debug-panel" style="display:none;position:fixed;bottom:8px;right:8px;width:min(520px,94vw);max-height:50vh;background:rgba(0,0,0,.85);color:#9fe;font:11px/1.35 ui-monospace,monospace;border:1px solid #333;border-radius:6px;z-index:9999;">
+    <div style="display:flex;gap:6px;padding:6px 8px;border-bottom:1px solid #333;align-items:center;">
+      <strong style="color:#fff;">debug</strong>
+      <span id="debug-role" style="color:#888;"></span>
+      <span style="flex:1;"></span>
+      <button onclick="document.getElementById('debug-log').textContent='';flashBtn(this,'cleared')" style="background:transparent;border:1px solid #555;color:#ccc;padding:2px 6px;font-size:10px;border-radius:3px;">clear</button>
+      <button onclick="navigator.clipboard.writeText(document.getElementById('debug-log').textContent).then(function(){flashBtn(event.target,'copied')})" style="background:transparent;border:1px solid #555;color:#ccc;padding:2px 6px;font-size:10px;border-radius:3px;">copy</button>
+      <button onclick="this.closest('#debug-panel').style.display='none'" style="background:transparent;border:1px solid #555;color:#ccc;padding:2px 6px;font-size:10px;border-radius:3px;">×</button>
+    </div>
+    <pre id="debug-log" style="margin:0;padding:6px 8px;overflow:auto;max-height:calc(50vh - 32px);white-space:pre-wrap;word-break:break-word;"></pre>
+  </div>
+
+  <footer class="site-footer" role="contentinfo">
+    <a href="https://github.com/jonasneves/tallyho" target="_blank" rel="noopener" class="footer-link" aria-label="View source on GitHub">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span id="commit-hash"></span>
+    </a>
+  </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
