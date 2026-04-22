@@ -11,21 +11,54 @@
 
   <header class="site-header" role="banner">
     <a class="site-title" href="#" onclick="goHome(); return false;" aria-label="TallyHo home">
-      <span class="title-tally">Tally</span><span class="title-ho">Ho</span>
+      <span class="wordmark">
+        <span class="wordmark-tally">Tally</span><span class="wordmark-sep" aria-hidden="true">·</span><span class="wordmark-ho">Ho</span>
+      </span>
     </a>
+
+    <nav class="session-telemetry" id="session-telemetry" aria-label="Session telemetry">
+      <span class="telemetry-item telemetry-target" id="telemetry-target">
+        <span class="telemetry-label">Target</span>
+        <span class="telemetry-value" id="target-label">—</span>
+      </span>
+      <span class="telemetry-divider" aria-hidden="true"></span>
+      <span class="telemetry-item telemetry-catalog" id="telemetry-catalog">
+        <span class="telemetry-label">Catalog</span>
+        <span class="telemetry-value" id="catalog-count">0</span>
+      </span>
+      <span class="telemetry-item telemetry-rejected" id="telemetry-rejected">
+        <span class="telemetry-label">Rejected</span>
+        <span class="telemetry-value" id="rejected-count">0</span>
+      </span>
+    </nav>
+
     <div class="header-auth" id="header-auth"></div>
   </header>
 
   <!-- Lobby: one action -->
   <main id="screen-lobby" class="screen active" role="main">
     <div class="lobby-inner">
-      <span class="lobby-icon" aria-hidden="true">📋</span>
-      <h1 class="lobby-title"><span class="title-tally">Tally</span><span class="title-ho">Ho</span></h1>
-      <p class="lobby-sub">Builds a catalog of what your phone camera sees</p>
-      <p class="lobby-detail">A small vision model in your browser describes each frame. An LLM decides what is worth adding to the catalog.</p>
+      <div class="lobby-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8" y="6" width="32" height="38" rx="3"/>
+          <path d="M18 4h12v6H18z" fill="currentColor" stroke="none"/>
+          <path d="M15 20h18M15 27h18M15 34h12"/>
+        </svg>
+      </div>
+      <h1 class="lobby-title">
+        <span class="wordmark-tally">Tally</span><span class="wordmark-sep">·</span><span class="wordmark-ho">Ho</span>
+      </h1>
+      <p class="lobby-kicker">A visual cataloger</p>
+      <p class="lobby-sub">Point your phone camera at objects. A small vision model in your browser describes each frame. An agent decides what is worth adding to the catalog, and says no when it is not.</p>
 
       <!-- Desktop: primary action is start -->
-      <button class="btn btn-start desktop-only" onclick="startApp()" aria-label="Start camera feed">Start Camera</button>
+      <button class="btn btn-primary btn-start desktop-only" onclick="startApp()" aria-label="Start camera feed">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2.5 4.5h7L11 6h2.5v6.5h-11z"/>
+          <circle cx="6" cy="9" r="2.25"/>
+        </svg>
+        Start camera
+      </button>
 
       <!-- Mobile: primary action is scan to connect -->
       <div class="mobile-only mobile-connect">
@@ -38,11 +71,11 @@
           <label>Or type a peer ID</label>
           <input id="manual-peer-mobile" placeholder="e.g. abc123" maxlength="8" aria-label="Peer ID" />
         </div>
-        <button class="btn" onclick="connectFromMobile()">Connect</button>
+        <button class="btn btn-primary" onclick="connectFromMobile()">Connect</button>
       </div>
 
       <div class="phone-connect desktop-only">
-        <span class="phone-connect-label">Use your phone as a second camera <span class="optional-tag">optional</span></span>
+        <span class="phone-connect-label">Pair a phone as a second camera <span class="optional-tag">optional</span></span>
         <span class="phone-connect-hint">Scan from your phone to stream its camera wirelessly</span>
         <div class="qr-lobby" id="my-qr"></div>
         <span class="peer-display" id="my-peer-display"></span>
@@ -54,22 +87,26 @@
   <div id="screen-live" class="screen">
     <div class="live-layout">
 
-      <!-- Perception layer: cameras, then VLM caption below -->
-      <div class="perception-layer">
-        <div class="live-main">
-          <div class="status-bar">
-            <span class="status-dot" id="live-dot" aria-hidden="true"></span>
-            <span id="live-status" role="status" aria-live="polite">Starting...</span>
+      <!-- Perception column: cameras + VLM caption + agent log -->
+      <section class="perception-column" aria-label="Perception">
+        <div class="camera-card">
+          <div class="camera-card-head">
+            <span class="status-bar">
+              <span class="status-dot" id="live-dot" aria-hidden="true"></span>
+              <span id="live-status" role="status" aria-live="polite">Starting...</span>
+            </span>
           </div>
+
           <!-- Mobile: own camera -->
           <div class="video-wrap mobile-only" id="mobile-camera-wrap">
             <video id="mobile-camera" autoplay playsinline muted></video>
           </div>
+
           <!-- Desktop: cameras -->
           <div class="camera-area desktop-only">
             <div class="qr-badge" id="qr-badge">
               <div class="qr-tiny" id="live-qr"></div>
-              <span class="qr-badge-text">+ camera</span>
+              <span class="qr-badge-text">+ phone</span>
             </div>
             <div class="camera-grid" id="camera-grid">
               <div class="camera-feed camera-feed-full" id="feed-local">
@@ -84,48 +121,63 @@
           </div>
         </div>
 
-        <div class="vlm-panel desktop-only">
-          <div class="vlm-header">
-            <span>LFM2.5-VL-450M</span>
+        <div class="vlm-panel desktop-only" aria-label="Vision model">
+          <div class="panel-head">
+            <span class="panel-eyebrow">Vision model</span>
+            <span class="panel-title">LFM2.5<span class="panel-title-dim">-VL-450M</span></span>
             <span class="vlm-badge" id="vlm-badge"></span>
           </div>
           <div class="vlm-body" id="vlm-body"></div>
         </div>
-      </div>
 
-      <!-- Reasoning layer: agent, memory, captures -->
-      <div class="reasoning-layer">
         <div id="agent-panel"></div>
+      </section>
 
-        <div class="memory-panel">
-          <div class="panel-header">
-            <span>Memory</span>
-            <span class="panel-header-actions">
-              <span class="memory-count" id="memory-count">0</span>
-              <button class="copy-btn" id="memory-clear" onclick="clearMemory()" style="display:none">Clear</button>
+      <!-- Cataloger column: catalog (hero) + rejected -->
+      <section class="cataloger-column" aria-label="Cataloger">
+        <div class="catalog-panel" id="captures-panel">
+          <div class="panel-head panel-head-hero">
+            <span class="panel-eyebrow">Work product</span>
+            <h2 class="panel-title panel-title-lg">Catalog</h2>
+            <span class="panel-head-actions">
+              <span class="count-pill count-pill-strong" id="captures-count">0</span>
+              <button class="ghost-btn" onclick="clearCaptures()">Clear</button>
             </span>
           </div>
-          <div class="memory-list" id="memory-list">
-            <div class="memory-empty" aria-live="polite">No observations yet</div>
+          <div id="captures" class="captures-list">
+            <div class="empty-state" aria-live="polite">
+              <svg viewBox="0 0 40 40" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="8" y="6" width="24" height="28" rx="2"/>
+                <path d="M14 14h12M14 20h12M14 26h8"/>
+              </svg>
+              <span class="empty-title">No entries yet</span>
+              <span class="empty-sub">Captured frames will land here.</span>
+            </div>
           </div>
         </div>
 
-        <div class="captures-panel" id="captures-panel" style="display:none">
-          <div class="panel-header">
-            <span>Captures</span>
-            <span class="panel-header-actions">
-              <span class="memory-count" id="captures-count">0</span>
-              <button class="copy-btn" onclick="clearCaptures()">Clear</button>
+        <div class="rejected-panel">
+          <div class="panel-head">
+            <span class="panel-eyebrow rejected-eyebrow">Signature behavior</span>
+            <h2 class="panel-title">Rejected</h2>
+            <span class="panel-head-actions">
+              <span class="count-pill count-pill-rejected" id="memory-count">0</span>
+              <button class="ghost-btn" id="memory-clear" onclick="clearMemory()" style="display:none">Clear</button>
             </span>
           </div>
-          <div id="captures"></div>
+          <p class="rejected-hint">Things that looked like a catalog item but were ruled out.</p>
+          <div class="rejected-list" id="memory-list">
+            <div class="empty-state empty-state-sm" aria-live="polite">
+              <span class="empty-title">Nothing ruled out yet</span>
+              <span class="empty-sub">The agent will list refusals here.</span>
+            </div>
+          </div>
         </div>
-      </div>
-
+      </section>
 
     </div>
 
-    <button class="btn btn-disconnect" onclick="disconnect()" aria-label="Disconnect and return to lobby">Disconnect</button>
+    <button class="btn btn-disconnect" onclick="disconnect()" aria-label="Disconnect and return to lobby">End session</button>
   </div>
 
   <div id="debug-panel" style="display:none;position:fixed;bottom:8px;right:8px;width:min(520px,94vw);max-height:50vh;background:rgba(0,0,0,.85);color:#9fe;font:11px/1.35 ui-monospace,monospace;border:1px solid #333;border-radius:6px;z-index:9999;">
@@ -142,7 +194,7 @@
 
   <footer class="site-footer" role="contentinfo">
     <a href="https://github.com/jonasneves/tallyho" target="_blank" rel="noopener" class="footer-link" aria-label="View source on GitHub">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       <span id="commit-hash"></span>
     </a>
   </footer>

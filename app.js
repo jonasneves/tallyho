@@ -1,5 +1,5 @@
 import { runAgent, stopAgent, buildSystemPrompt, getModelName } from './src/agent.js';
-import { VLM_DEFAULT_PROMPT } from './src/tools.js';
+import { VLM_DEFAULT_PROMPT, TARGET_CATEGORY } from './src/tools.js';
 import { initPeer, connectToPeer, closePeer, getDataConn, sendData, getConnectionInfo } from './src/peer.js';
 
 window.flashBtn = function (btn, label) {
@@ -237,6 +237,13 @@ var captures = [];
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
+  document.body.classList.toggle('live', id === 'screen-live');
+}
+
+function renderTargetLabel() {
+  var el = document.getElementById('target-label');
+  if (!el) return;
+  el.textContent = TARGET_CATEGORY.charAt(0).toUpperCase() + TARGET_CATEGORY.slice(1);
 }
 
 function showRemoteFeed() {
@@ -381,6 +388,7 @@ async function boot() {
   }
   agentMemory = loadMemoryFromStorage();
   renderMemory();
+  renderTargetLabel();
   document.getElementById('my-peer-display').textContent = myId;
 
   // Desktop: persist room ID in URL so reloads keep the same QR
@@ -836,20 +844,31 @@ function renderMemory() {
   saveMemoryToStorage();
   var container = document.getElementById('memory-list');
   if (!container) return;
+  // Rejected column only shows scene rejections — catalog entries live in the catalog.
+  var rejections = agentMemory.filter(function (m) { return (m.entry || '').indexOf('scene: ') === 0; });
   var count = document.getElementById('memory-count');
-  if (count) count.textContent = agentMemory.length;
+  if (count) count.textContent = rejections.length;
+  var telemetryReject = document.getElementById('rejected-count');
+  if (telemetryReject) telemetryReject.textContent = rejections.length;
   var clearBtn = document.getElementById('memory-clear');
   if (clearBtn) clearBtn.style.display = agentMemory.length > 0 ? '' : 'none';
   container.innerHTML = '';
-  if (agentMemory.length === 0) {
-    container.innerHTML = '<div class="memory-empty">No observations yet</div>';
+  if (rejections.length === 0) {
+    container.innerHTML =
+      '<div class="empty-state empty-state-sm" aria-live="polite">' +
+        '<span class="empty-title">Nothing ruled out yet</span>' +
+        '<span class="empty-sub">The agent will list refusals here.</span>' +
+      '</div>';
     return;
   }
-  for (var i = agentMemory.length - 1; i >= 0; i--) {
-    var m = agentMemory[i];
+  for (var i = rejections.length - 1; i >= 0; i--) {
+    var m = rejections[i];
+    var reason = m.entry.slice(7); // strip "scene: " prefix
     var el = document.createElement('div');
     el.className = 'memory-entry';
-    el.innerHTML = '<span class="memory-time">' + m.time + '</span> ' + escapeHtml(m.entry);
+    el.innerHTML =
+      '<span class="memory-reason">' + escapeHtml(reason) + '</span>' +
+      '<span class="memory-time">' + m.time + '</span>';
     container.appendChild(el);
   }
 }
@@ -866,13 +885,30 @@ window.clearCaptures = clearCaptures;
 
 function renderCaptures(newCapture) {
   if (newCapture) saveCaptureToDB(newCapture);
-  var panel = document.getElementById('captures-panel');
   var container = document.getElementById('captures');
   var count = document.getElementById('captures-count');
+  var telemetry = document.getElementById('catalog-count');
   if (!container) return;
-  if (panel) panel.style.display = captures.length > 0 ? '' : 'none';
   if (count) count.textContent = captures.length;
+  if (telemetry) telemetry.textContent = captures.length;
+  var telemetryReject = document.getElementById('rejected-count');
+  if (telemetryReject) {
+    var rejCount = agentMemory.filter(function (m) { return (m.entry || '').indexOf('scene: ') === 0; }).length;
+    telemetryReject.textContent = rejCount;
+  }
   container.innerHTML = '';
+  if (captures.length === 0) {
+    container.innerHTML =
+      '<div class="empty-state" aria-live="polite">' +
+        '<svg viewBox="0 0 40 40" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<rect x="8" y="6" width="24" height="28" rx="2"/>' +
+          '<path d="M14 14h12M14 20h12M14 26h8"/>' +
+        '</svg>' +
+        '<span class="empty-title">No entries yet</span>' +
+        '<span class="empty-sub">Captured frames will land here.</span>' +
+      '</div>';
+    return;
+  }
   for (var i = captures.length - 1; i >= 0; i--) {
     var c = captures[i];
     var card = document.createElement('div');

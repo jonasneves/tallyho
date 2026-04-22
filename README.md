@@ -6,7 +6,7 @@
 [![Claude](https://img.shields.io/badge/agent-Claude%20Sonnet-orange)](https://anthropic.com)
 [![WebRTC](https://img.shields.io/badge/P2P-WebRTC-lightgrey)](https://webrtc.org/)
 
-AIPI 590.03 Intelligent Agents — Project 2. Team: Jonas Neves + Atharva Jog.
+AIPI 590.03 Intelligent Agents — Project 2.
 
 > **Status: in development.** Forked from catwatcher on 2026-04-22. Agent logic, tools, and eval dataset are still catwatcher-shaped as of this commit. Cataloger generalization is underway across subsequent slices.
 
@@ -98,3 +98,7 @@ make eval
 TBD after Slice D. Current `results/eval/scores.json` reflects the inherited catwatcher run and does not describe TallyHo.
 
 **Known limitation**: when the VLM misidentifies a can as another object (e.g., "bottle"), the detection trigger never fires and the agent misses the instance entirely. This is the most teachable failure mode of the DL arm, and part of why the classical arm exists as a comparison.
+
+## Team
+
+Jonas Neves ([`jonasneves`](https://github.com/jonasneves)) and Atharva Jog ([`Jog-sama`](https://github.com/Jog-sama)).
