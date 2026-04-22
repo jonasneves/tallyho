@@ -84,32 +84,6 @@ function loadMemoryFromStorage() {
 var VLM_MODEL = 'LiquidAI/LFM2.5-VL-450M-ONNX';
 var CAT_PATTERN = /\b(cat|cats|feline|kitten|kitty|tabby)\b/i;
 
-// ── Cat profiles ────────────────────────────────────────────────
-
-var DEFAULT_CATS = [
-  { name: 'Oscar', desc: 'dark charcoal gray, short smooth fur' },
-  { name: 'Maomao', desc: 'light silvery gray, long fluffy fur' }
-];
-
-function loadCatProfiles() {
-  try {
-    var saved = localStorage.getItem('cat_profiles');
-    if (saved) return JSON.parse(saved);
-  } catch (_) {}
-  return DEFAULT_CATS;
-}
-
-function saveCatProfiles() {
-  var profiles = [];
-  document.querySelectorAll('.cat-profile').forEach(function (el) {
-    var name = el.querySelector('.cat-name').value.trim();
-    var desc = el.querySelector('.cat-desc').value.trim();
-    if (name) profiles.push({ name: name, desc: desc });
-  });
-  localStorage.setItem('cat_profiles', JSON.stringify(profiles));
-  return profiles;
-}
-
 function saveApiKey(value) {
   if (value.trim()) {
     localStorage.setItem('anthropic_key', value.trim());
@@ -218,45 +192,6 @@ async function renderGitHubStatus() {
       menu.classList.remove('open');
     }
   });
-}
-
-function initCatSettings() {
-  var cats = loadCatProfiles();
-  var container = document.querySelector('.settings-body');
-  if (!container) return;
-
-  // Clear existing profiles and rebuild
-  container.querySelectorAll('.cat-profile').forEach(function (el, i) {
-    if (i < cats.length) {
-      el.querySelector('.cat-name').value = cats[i].name;
-      el.querySelector('.cat-desc').value = cats[i].desc;
-    }
-  });
-
-  // Add extra profiles beyond the initial 2
-  for (var i = 2; i < cats.length; i++) {
-    addCatProfile(cats[i].name, cats[i].desc);
-  }
-
-  // Auto-save on input change
-  container.addEventListener('input', function () { saveCatProfiles(); });
-}
-
-function addCatProfile(name, desc) {
-  var container = document.querySelector('.settings-body');
-  var btn = container.querySelector('.btn-add-cat');
-  var profile = document.createElement('div');
-  profile.className = 'cat-profile';
-  profile.innerHTML =
-    '<div class="field"><label>Name</label><input class="cat-name" placeholder="e.g. Luna" value="' + (name || '') + '" /></div>' +
-    '<div class="field"><label>Description</label><input class="cat-desc" placeholder="e.g. orange tabby, medium fur" value="' + (desc || '') + '" /></div>';
-  container.insertBefore(profile, btn);
-}
-
-function getCatProfilesForPrompt() {
-  var cats = loadCatProfiles();
-  if (cats.length === 0) return 'No cats configured.';
-  return cats.map(function (c) { return '- ' + c.name + ': ' + c.desc; }).join('\n');
 }
 
 // ── State ───────────────────────────────────────────────────────
@@ -468,7 +403,6 @@ async function boot() {
   img.className = 'qr-img';
   qrWrap.appendChild(img);
 
-  initCatSettings();
   renderGitHubStatus();
   initPeer(myId, peerCtx);
 
@@ -876,7 +810,7 @@ var agentCtx = {
   get captures() { return captures; },
   get vlm() { return vlm; },
   get dataConn() { return getDataConn(); },
-  get catProfiles() { return getCatProfilesForPrompt(); },
+  get catProfiles() { return ''; },
   captureCurrentFrame: captureCurrentFrame,
   agentLog: agentLog,
   renderMemory: renderMemory,
@@ -1047,7 +981,6 @@ window.loadVLM = loadVLM;
 window.copyAgentLog = copyAgentLog;
 window.triggerStopAgent = triggerStopAgent;
 window.setVLMSource = setVLMSource;
-window.addCatProfile = addCatProfile;
 window.saveApiKey = saveApiKey;
 window.loginWithGitHub = loginWithGitHub;
 window.logoutGitHub = logoutGitHub;

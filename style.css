@@ -102,8 +102,8 @@ body {
   letter-spacing: -0.01em;
   cursor: pointer;
 }
-.title-cat { color: var(--text); font-weight: 800; }
-.title-watcher { color: var(--text-secondary); font-weight: 500; }
+.title-tally { color: var(--text); font-weight: 800; }
+.title-ho { color: var(--text-secondary); font-weight: 500; }
 
 /* ── Auth menu (header) ─────────────────────────── */
 
@@ -260,12 +260,6 @@ body {
   margin-bottom: 24px;
 }
 
-/* Cat settings standalone in lobby */
-#cat-settings {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
 .btn-start {
   font-size: var(--text-body);
   font-weight: 600;
@@ -330,34 +324,6 @@ body {
   flex-direction: column;
   gap: 14px;
 }
-
-.cat-profile {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  background: var(--surface-raised);
-}
-
-.btn-add-cat {
-  width: 100%;
-  min-height: 44px;
-  padding: 12px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-secondary);
-  font-family: var(--font);
-  font-size: var(--text-secondary-size);
-  cursor: pointer;
-  transition: border-color .15s, color .15s;
-}
-@media (hover: hover) {
-  .btn-add-cat:hover { border-color: var(--accent-light); color: var(--text); }
-}
-.btn-add-cat:active { opacity: 0.7; }
 
 .settings-hint {
   font-size: var(--text-caption);
@@ -1165,7 +1131,6 @@ a:focus-visible,
 summary:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
-.btn-add-cat:focus-visible,
 .vlm-load-btn:focus-visible,
 .site-title:focus-visible {
   outline: 2px solid var(--accent-light);

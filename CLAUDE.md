@@ -1,8 +1,8 @@
 # CLAUDE.md — TallyHo
 
-AIPI 590.03 Intelligent Agents — Project 2: an LLM-based agent that recognizes your cats by name through a live camera feed. Users define their cats' appearance (fur, color, features). A small VLM (LFM2.5-VL-450M) provides continuous perception, Claude reasons and identifies.
+AIPI 590.03 Intelligent Agents — Project 2: a visual cataloger that walks a scene with an operator and builds a structured inventory of a target category (cans, for the Project 2 demo). A small VLM (LFM2.5-VL-450M) runs in-browser via WebGPU for continuous perception. Claude reasons about the VLM output, guides the operator through the phone camera to get better angles, and records catalog entries. Two versions run against the same eval harness: a deep-learning arm (VLM + Claude) and a classical arm (HSV + contours + Tesseract legacy OCR).
 
-**Status:** assignment already delivered and graded. Ongoing work is post-delivery improvement — no grader deadline, no demo constraints. Optimize for long-term quality and what's actually useful, not for checking assignment boxes.
+**Status:** Project 2 in development. Forked from catwatcher 2026-04-22. Team of two (Jonas + Atharva Jog). No grader deadline pinned yet. Optimize for portfolio-quality and honest eval, not for checking rubric boxes.
 
 ## Project structure
 

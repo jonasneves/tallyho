@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐱</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>" />
   <title>TallyHo</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -11,7 +11,7 @@
 
   <header class="site-header" role="banner">
     <a class="site-title" href="#" onclick="goHome(); return false;" aria-label="TallyHo home">
-      <span class="title-cat">Tally</span><span class="title-watcher">Ho</span>
+      <span class="title-tally">Tally</span><span class="title-ho">Ho</span>
     </a>
     <div class="header-auth" id="header-auth"></div>
   </header>
@@ -19,10 +19,10 @@
   <!-- Lobby: one action -->
   <main id="screen-lobby" class="screen active" role="main">
     <div class="lobby-inner">
-      <span class="lobby-icon" aria-hidden="true">🐱</span>
-      <h1 class="lobby-title"><span class="title-cat">Cat</span><span class="title-watcher">Watcher</span></h1>
-      <p class="lobby-sub">Identifies your cats by name from a live camera feed</p>
-      <p class="lobby-detail">A small vision model runs in your browser for continuous perception. An LLM reasons only when a cat is detected.</p>
+      <span class="lobby-icon" aria-hidden="true">📋</span>
+      <h1 class="lobby-title"><span class="title-tally">Tally</span><span class="title-ho">Ho</span></h1>
+      <p class="lobby-sub">Builds a catalog of what your phone camera sees</p>
+      <p class="lobby-detail">A small vision model in your browser describes each frame. An LLM decides what is worth adding to the catalog.</p>
 
       <!-- Desktop: primary action is start -->
       <button class="btn btn-start desktop-only" onclick="startApp()" aria-label="Start camera feed">Start Camera</button>
@@ -40,33 +40,6 @@
         </div>
         <button class="btn" onclick="connectFromMobile()">Connect</button>
       </div>
-
-      <details class="settings-section" id="cat-settings" aria-label="Cat profile settings">
-        <summary>My cats</summary>
-        <div class="settings-body">
-          <div class="cat-profile" data-index="0">
-            <div class="field">
-              <label>Name</label>
-              <input class="cat-name" placeholder="e.g. Oscar" />
-            </div>
-            <div class="field">
-              <label>Description (fur color, length, distinguishing features)</label>
-              <input class="cat-desc" placeholder="e.g. dark charcoal gray, short smooth fur" />
-            </div>
-          </div>
-          <div class="cat-profile" data-index="1">
-            <div class="field">
-              <label>Name</label>
-              <input class="cat-name" placeholder="e.g. Maomao" />
-            </div>
-            <div class="field">
-              <label>Description</label>
-              <input class="cat-desc" placeholder="e.g. light silvery gray, long fluffy fur" />
-            </div>
-          </div>
-          <button class="btn-add-cat" onclick="addCatProfile()" aria-label="Add another cat profile">+ Add another cat</button>
-        </div>
-      </details>
 
       <div class="phone-connect desktop-only">
         <span class="phone-connect-label">Use your phone as a second camera <span class="optional-tag">optional</span></span>
