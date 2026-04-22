@@ -55,8 +55,8 @@ Two implementations run against the same eval harness and the same target catego
 | `capture_frame` | shipped | Save the current frame with VLM validation |
 | `check_image` | shipped | Send frame to Claude for direct visual analysis |
 | `update_memory` | shipped | Persist observations across detection cycles |
-| `guide_operator` | planned | Push an overlay message to the phone camera |
-| `check_catalog_match` | planned | Dedup against already-catalogued entries |
+| `guide_operator` | shipped | Push an overlay message to the phone camera (e.g. "step closer", "rotate to show the label") |
+| `check_catalog_match` | shipped | Dedup against already-catalogued entries before capture |
 
 ## Project structure
 

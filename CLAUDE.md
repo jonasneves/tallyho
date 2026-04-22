@@ -33,7 +33,7 @@ Phone streams camera via WebRTC (raw, signal.neevs.io for signaling) to desktop.
 
 ## Tools
 
-See `src/tools.js` for the live set of tool definitions. Each tool's description is the contract Claude sees. Planned additions tracked in README: `guide_operator` (push overlay messages to the phone) and `check_catalog_match` (dedup against already-catalogued entries).
+See `src/tools.js` for the live set of tool definitions. Each tool's description is the contract Claude sees.
 
 ## Requirements
 
