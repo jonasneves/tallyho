@@ -30,6 +30,15 @@
         <span class="telemetry-label">Rejected</span>
         <span class="telemetry-value" id="rejected-count">0</span>
       </span>
+      <span class="telemetry-divider" aria-hidden="true"></span>
+      <span class="telemetry-item telemetry-pipeline" id="telemetry-pipeline">
+        <span class="telemetry-label">Pipeline</span>
+        <span class="pipeline-toggle" role="group" aria-label="Pipeline selector">
+          <button type="button" class="pipeline-opt is-active" id="pipeline-dl" aria-pressed="true" onclick="setPipeline('dl')">DL</button>
+          <button type="button" class="pipeline-opt" id="pipeline-classical" aria-pressed="false" onclick="setPipeline('classical')">Classical</button>
+        </span>
+        <span class="pipeline-status" id="pipeline-status" aria-live="polite"></span>
+      </span>
     </nav>
 
     <div class="header-auth" id="header-auth"></div>

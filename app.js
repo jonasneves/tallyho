@@ -1,6 +1,7 @@
 import { runAgent, stopAgent, buildSystemPrompt, getModelName } from './src/agent.js';
 import { VLM_DEFAULT_PROMPT, TARGET_CATEGORY } from './src/tools.js';
 import { initPeer, connectToPeer, closePeer, getDataConn, sendData, getConnectionInfo } from './src/peer.js';
+import { analyzeFrame as classicalAnalyzeFrame, preload as classicalPreload, isLoaded as classicalIsLoaded } from './src/classical.js';
 
 window.flashBtn = function (btn, label) {
   if (!btn) return;
@@ -230,6 +231,14 @@ var agentConsecutiveRejects = 0;
 var agentMemory = [];
 var agentTokensTotal = { input: 0, output: 0 };
 var captures = [];
+
+// Pipeline: 'dl' (LFM2.5 + Claude) or 'classical' (HSV + shape + OCR).
+// In classical mode the VLM keeps running for the operator's eyes but the
+// agent dispatch is paused (no Claude calls), and a Snap button drives
+// classical analysis on demand.
+var pipeline = 'dl';
+var classicalLoading = false;
+var classicalBusy = false;
 
 
 // ── UI helpers ──────────────────────────────────────────────────
@@ -723,7 +732,7 @@ async function runOneInference() {
 
     // Trigger agent only when a target item is detected, agent is idle, and not a duplicate
     var triggered = false;
-    if (TARGET_PATTERN.test(text) && !agentBusy && Date.now() > agentCooldownUntil) {
+    if (pipeline === 'dl' && TARGET_PATTERN.test(text) && !agentBusy && Date.now() > agentCooldownUntil) {
       var shouldSkip = false;
       if (agentLastCapture && Date.now() - agentLastCapture.time < 60000) {
         var snippet = text.slice(0, 80).toLowerCase();
@@ -920,6 +929,94 @@ function renderCaptures(newCapture) {
         (c.description ? '<div class="diary-desc">' + escapeHtml(c.description) + '</div>' : '') +
       '</div>';
     container.appendChild(card);
+  }
+}
+
+// ── Pipeline toggle (DL vs Classical) ───────────────────────────
+
+async function setPipeline(mode) {
+  if (mode === pipeline || classicalLoading) return;
+  if (mode === 'classical' && !classicalIsLoaded()) {
+    classicalLoading = true;
+    updatePipelineUI('loading');
+    try {
+      if (typeof classicalPreload === 'function') await classicalPreload();
+      else { var c = document.createElement('canvas'); c.width = 64; c.height = 64; await classicalAnalyzeFrame(c, { withOCR: false }); }
+    } catch (e) { classicalLoading = false; updatePipelineUI('error', e.message); return; }
+    classicalLoading = false;
+  }
+  pipeline = mode;
+  updatePipelineUI('ready');
+  document.body.classList.toggle('pipeline-classical', mode === 'classical');
+  var panel = document.getElementById('agent-panel');
+  if (mode === 'classical' && panel) {
+    panel.innerHTML =
+      '<div class="agent-section classical-mode"><div class="panel-header">' +
+      '<span>Classical CV pipeline <span class="agent-model">HSV · shape · OCR</span></span>' +
+      '<span class="panel-header-actions"><span id="classical-latency" class="agent-model"></span></span>' +
+      '</div><div class="classical-body">' +
+      '<button class="snap-btn" id="snap-btn" onclick="snapAndAnalyze()">Snap and analyze</button>' +
+      '<p class="classical-hint">Single-shot. Same camera frame; no VLM, no Claude.</p>' +
+      '<div class="agent-log" id="agent-log"></div></div></div>';
+  } else { initAgentPanel(); }
+  var vlmOut = document.getElementById('vlm-output');
+  if (vlmOut) vlmOut.classList.toggle('vlm-paused', mode === 'classical');
+}
+window.setPipeline = setPipeline;
+
+function updatePipelineUI(state, msg) {
+  var dl = document.getElementById('pipeline-dl');
+  var cl = document.getElementById('pipeline-classical');
+  var status = document.getElementById('pipeline-status');
+  if (!dl || !cl) return;
+  var loading = state === 'loading';
+  dl.disabled = cl.disabled = loading;
+  dl.classList.toggle('is-active', pipeline === 'dl' && !loading);
+  cl.classList.toggle('is-active', pipeline === 'classical' && !loading);
+  dl.setAttribute('aria-pressed', pipeline === 'dl' && !loading);
+  cl.setAttribute('aria-pressed', pipeline === 'classical' && !loading);
+  cl.textContent = loading ? 'Loading…' : 'Classical';
+  if (status) status.textContent = loading ? 'Loading classical pipeline (~15MB, first time only)…' : (state === 'error' ? 'Failed: ' + (msg || 'unknown') : '');
+}
+
+async function snapAndAnalyze() {
+  if (classicalBusy) return;
+  if (classicalLoading) { var s = document.getElementById('pipeline-status'); if (s) s.textContent = 'Still loading…'; return; }
+  var canvas = captureCurrentFrame(640);
+  if (!canvas) { renderClassicalDecision({ detected: false, reasons: ['no camera frame available'], confidence: 0, latency_ms: 0 }, null); return; }
+  classicalBusy = true;
+  var btn = document.getElementById('snap-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Analyzing…'; }
+  try {
+    var decision = await classicalAnalyzeFrame(canvas);
+    renderClassicalDecision(decision, canvas.toDataURL('image/jpeg', 0.85));
+  } catch (e) {
+    renderClassicalDecision({ detected: false, reasons: ['Classical pipeline error: ' + e.message], confidence: 0, latency_ms: 0 }, null);
+  }
+  classicalBusy = false;
+  if (btn) { btn.disabled = false; btn.textContent = 'Snap and analyze'; }
+}
+window.snapAndAnalyze = snapAndAnalyze;
+
+function renderClassicalDecision(decision, dataUrl) {
+  var lat = document.getElementById('classical-latency');
+  var conf = (decision.confidence || 0).toFixed(2);
+  var ms = Math.round(decision.latency_ms || 0);
+  if (lat) lat.textContent = ms + 'ms · conf ' + conf;
+  var now = new Date().toLocaleTimeString();
+  var meta = 'classical · conf ' + conf + ' · ' + ms + 'ms';
+  if (decision.detected) {
+    var label = (decision.label && decision.label.trim()) || 'Unlabeled can';
+    var desc = (decision.reasons || []).join(' · ').slice(0, 80);
+    var cap = { label: label, description: desc + ' [' + meta + ']', image: dataUrl || '', time: now };
+    captures.push(cap); renderCaptures(cap);
+    appendLogEntry(document.getElementById('agent-log'), 'capture', label, (decision.reasons || []).join('\n'));
+  } else {
+    var reason = (decision.reasons && decision.reasons[0]) || 'no signals fired';
+    agentMemory.push({ entry: 'scene: ' + reason + ' [' + meta + ']', time: now });
+    if (agentMemory.length > 20) agentMemory.shift();
+    renderMemory();
+    appendLogEntry(document.getElementById('agent-log'), 'reject', reason, (decision.reasons || []).join('\n'));
   }
 }
 

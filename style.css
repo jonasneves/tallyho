@@ -1121,6 +1121,7 @@ body.live .session-telemetry { display: inline-flex; }
 .agent-entry .tag.agent   { background: var(--tag-agent-bg);   color: var(--tag-agent-fg); }
 .agent-entry .tag.tool    { background: var(--tag-tool-bg);    color: var(--tag-tool-fg); }
 .agent-entry .tag.capture { background: var(--tag-capture-bg); color: var(--tag-capture-fg); }
+.agent-entry .tag.reject  { background: rgba(200, 78, 0, .12);  color: var(--duke-copper); }
 
 .token-badge {
   font-size: var(--text-micro);
@@ -1657,6 +1658,58 @@ textarea:focus-visible,
   background-clip: padding-box;
   border: 2px solid transparent;
 }
+
+/* ── Pipeline toggle (header) ──────────────────────── */
+
+.telemetry-pipeline { gap: 8px; }
+.pipeline-toggle {
+  display: inline-flex;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .12);
+  padding: 2px;
+  overflow: hidden;
+}
+.pipeline-opt {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, .65);
+  font: 600 var(--text-micro)/1 var(--font);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+.pipeline-opt.is-active { background: var(--duke-royal); color: #fff; }
+body.pipeline-classical .pipeline-opt.is-active { background: var(--duke-copper); }
+.pipeline-opt:disabled { opacity: 0.6; cursor: progress; }
+.pipeline-status { font-size: var(--text-micro); color: rgba(255,255,255,.65); margin-left: 6px; }
+
+/* ── Classical mode panel ──────────────────────────── */
+
+.agent-section.classical-mode > .panel-header > span:first-child::before { background: var(--duke-copper); box-shadow: 0 0 0 3px rgba(200, 78, 0, .15); }
+.classical-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+.snap-btn {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--duke-copper);
+  color: #fff;
+  font: 600 var(--text-body)/1 var(--font);
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background var(--dur-fast), transform var(--dur-fast);
+}
+.snap-btn:hover:not(:disabled) { background: #A03F00; }
+.snap-btn:active:not(:disabled) { transform: scale(0.99); }
+.snap-btn:disabled { opacity: 0.7; cursor: progress; }
+.classical-hint { font-size: var(--text-caption); color: var(--text-muted); margin: 0; }
+.vlm-output.vlm-paused { opacity: 0.45; font-style: italic; }
+.vlm-output.vlm-paused::before { content: 'Paused (classical mode) — '; font-weight: 600; font-style: normal; color: var(--duke-copper); }
 
 /* ── Increased contrast ────────────────────────────── */
 
