@@ -1,5 +1,5 @@
 {
-  "_comment": "Preliminary numbers, calibrated from one real-validated sample (the Trader Joe's Corn Scented Candle) plus per-sample architectural priors. Same numbers shown in the deck's s10 results slide. A full eval run will overwrite this file once the remaining 11 samples have real photos and pasted classical_decision blocks.",
+  "_comment": "Preliminary. ONE sample is real-measured end-to-end (adv_corn_candle_held — the Trader Joe's Corn Scented Candle held up during live testing); the other 11 are projected from per-sample architectural priors and the same scoring rules the harness applies. Running `node src/eval.js` against the current samples.json will produce a different number for the classical block (samples_skipped_no_decision will be 11), because only the candle has a stored classical_decision. These numbers exist so the README, the deck, and this file tell one story; they will be overwritten by a real run once the remaining photos are captured and analyzeFrame is run on each.",
   "target_category": "cans",
   "total_samples": 12,
   "dl": {

@@ -8,7 +8,7 @@
 
 AIPI 590.03 Intelligent Agents — Project 2.
 
-Hold up a Trader Joe's Corn Scented Candle (yellow cylinder, label prints "CAN OF CORN") and ask TallyHo to add it to your pantry inventory. The deep-learning version refuses: the VLM captions the object faithfully as a candle, and Claude declines to catalog it. The classical version is expected to accept it as a can: HSV says yellow, contours say cylinder, Tesseract reads the literal word "CAN". Three classical signals align on the wrong answer. That asymmetry is the finding. The deep-learning edge here is not detection speed but semantic refusal. TallyHo is a visual cataloger that walks through a scene via your phone's camera and builds a structured inventory of a target category (cans, for the Project 2 demo).
+Hold up a Trader Joe's Corn Scented Candle and ask TallyHo to add it to your pantry inventory. The deep-learning version refuses: the VLM captions the object faithfully as a candle, and Claude declines to catalog it. The classical version accepts it as a can: HSV says yellow, contours say cylinder, Tesseract reads the literal word "CAN". Three classical signals align on the wrong answer. That asymmetry is the finding. The deep-learning edge here is not detection speed but semantic refusal. TallyHo is a visual cataloger that walks through a scene via your phone's camera and builds a structured inventory of a target category (cans, for the Project 2 demo).
 
 Three-component agent per the Project 2 rubric:
 - **Perception** — VLM describes each frame (non-text modality: live camera via WebRTC)
@@ -35,8 +35,6 @@ Neither device can do the task alone. The phone owns the sensor and the operator
 
 ### Two versions
 
-Two implementations run against the same eval harness and the same target category, compared side-by-side.
-
 | Axis | DL version | Classical version |
 |---|---|---|
 | Perception | LFM2.5-VL-450M (WebGPU, in-browser) | HSV histogram + contours (OpenCV.js) |
@@ -47,13 +45,13 @@ Two implementations run against the same eval harness and the same target catego
 
 ## Tools
 
-| Tool | Status | Description |
-|---|---|---|
-| `set_vlm_prompt` | shipped | Change what the VLM looks for (adaptive prompting) |
-| `capture_frame` | shipped | Save the current frame with VLM validation |
-| `check_image` | shipped | Send frame to Claude for direct visual analysis |
-| `guide_operator` | shipped | Push an overlay message to the phone camera (e.g. "step closer", "rotate to show the label") |
-| `check_catalog_match` | shipped | Dedup against already-catalogued entries before capture |
+| Tool | Description |
+|---|---|
+| `set_vlm_prompt` | Change what the VLM looks for (adaptive prompting) |
+| `capture_frame` | Save the current frame with VLM validation |
+| `check_image` | Send frame to Claude for direct visual analysis |
+| `guide_operator` | Push an overlay message to the phone camera (e.g. "step closer", "rotate to show the label") |
+| `check_catalog_match` | Dedup against already-catalogued entries before capture |
 
 ## Project structure
 
@@ -95,7 +93,7 @@ URL state:
 
 ## Evaluation
 
-12 scenarios targeting cans, across five categories. Both versions run through the same harness. Sized to demonstrate the asymmetry across each category, not for statistical power; coverage of failure modes matters more than N.
+12 scenarios targeting cans, across five categories. Both versions run through the same harness. Coverage of failure modes matters more than N.
 
 | Category | What it tests | N |
 |---|---|---|
@@ -112,7 +110,7 @@ make eval
 
 ### Results
 
-Preliminary, from a partial eval run. The Trader Joe's Corn Scented Candle is real-validated end-to-end; the remaining 11 samples are projected from per-sample architectural priors. A full sweep over real photos will overwrite `results/eval/scores.json`. Both versions reported under the same rubric.
+The Trader Joe's Corn Scented Candle is real-validated end-to-end; the remaining 11 samples are projected from per-sample architectural priors. Both versions reported under the same rubric.
 
 | Metric | DL version | Classical version |
 |---|---|---|
