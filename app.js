@@ -94,6 +94,14 @@ function saveApiKey(value) {
   }
 }
 
+function saveOpenaiKey(value) {
+  if (value.trim()) {
+    localStorage.setItem('openai_key', value.trim());
+  } else {
+    localStorage.removeItem('openai_key');
+  }
+}
+
 function loadApiKey() {
   var el = document.getElementById('api-key-input');
   if (el) el.value = localStorage.getItem('anthropic_key') || '';
@@ -135,6 +143,20 @@ async function renderGitHubStatus() {
   var login = localStorage.getItem('github_login');
   var token = localStorage.getItem('github_token');
   var apiKey = localStorage.getItem('anthropic_key') || '';
+  var openaiKey = localStorage.getItem('openai_key') || '';
+
+  var keyFields =
+    '<form onsubmit="return false" autocomplete="off">' +
+      '<div class="field">' +
+        '<label>Anthropic API key or token</label>' +
+        '<input id="api-key-input" type="password" placeholder="sk-ant-api03-… or sk-ant-oat01-…" value="' + escapeHtml(apiKey) + '" oninput="saveApiKey(this.value)" />' +
+      '</div>' +
+      '<div class="field">' +
+        '<label>OpenAI API key</label>' +
+        '<input id="openai-key-input" type="password" placeholder="sk-…" value="' + escapeHtml(openaiKey) + '" oninput="saveOpenaiKey(this.value)" />' +
+      '</div>' +
+    '</form>' +
+    '<p class="settings-hint">Anthropic routes via proxy.neevs.io. OpenAI calls <code>api.openai.com</code> directly. Anthropic takes precedence if both are set.</p>';
 
   if (token) {
     container.innerHTML =
@@ -147,15 +169,7 @@ async function renderGitHubStatus() {
           '<div class="auth-dropdown-section">' +
             '<span class="auth-dropdown-label">Signed in via GitHub</span>' +
           '</div>' +
-          '<div class="auth-dropdown-section">' +
-            '<form onsubmit="return false" autocomplete="off">' +
-              '<div class="field">' +
-                '<label>Anthropic API key or token</label>' +
-                '<input id="api-key-input" type="password" placeholder="sk-ant-api03-… or sk-ant-oat01-…" value="' + escapeHtml(apiKey) + '" oninput="saveApiKey(this.value)" />' +
-              '</div>' +
-            '</form>' +
-            '<p class="settings-hint">API key or long-lived token from <code>claude setup-token</code>. Routes via proxy.neevs.io.</p>' +
-          '</div>' +
+          '<div class="auth-dropdown-section">' + keyFields + '</div>' +
           '<button class="auth-signout" onclick="logoutGitHub()">Sign out</button>' +
         '</div>' +
       '</div>';
@@ -174,15 +188,7 @@ async function renderGitHubStatus() {
             '</button>' +
           '</div>' +
           '<div class="settings-divider"><span>or</span></div>' +
-          '<div class="auth-dropdown-section">' +
-            '<form onsubmit="return false" autocomplete="off">' +
-              '<div class="field">' +
-                '<label>Anthropic API key or token</label>' +
-                '<input id="api-key-input" type="password" placeholder="sk-ant-api03-… or sk-ant-oat01-…" value="' + escapeHtml(apiKey) + '" oninput="saveApiKey(this.value)" />' +
-              '</div>' +
-            '</form>' +
-            '<p class="settings-hint">API key or long-lived token from <code>claude setup-token</code>. Routes via proxy.neevs.io.</p>' +
-          '</div>' +
+          '<div class="auth-dropdown-section">' + keyFields + '</div>' +
         '</div>' +
       '</div>';
   }
@@ -1146,6 +1152,7 @@ window.copyAgentLog = copyAgentLog;
 window.triggerStopAgent = triggerStopAgent;
 window.setVLMSource = setVLMSource;
 window.saveApiKey = saveApiKey;
+window.saveOpenaiKey = saveOpenaiKey;
 window.loginWithGitHub = loginWithGitHub;
 window.logoutGitHub = logoutGitHub;
 window.showLightbox = showLightbox;

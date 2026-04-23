@@ -5,18 +5,34 @@ import { AGENT_TOOLS, executeTool, VLM_DEFAULT_PROMPT, TARGET_CATEGORY } from '.
 
 var GH_MODELS_URL = 'https://models.inference.ai.azure.com/chat/completions';
 var GH_MODEL_ID = 'gpt-4o';
+var OPENAI_URL = 'https://api.openai.com/v1/chat/completions';
+var OPENAI_MODEL_ID = 'gpt-5.4';
 
 function getProvider() {
-  // Claude only if the user explicitly pasted a token; otherwise GitHub Models.
-  var anthropicKey = typeof localStorage !== 'undefined' ? (localStorage.getItem('anthropic_key') || '') : '';
+  // Priority: explicit Anthropic key > explicit OpenAI key > GitHub OAuth fallback.
+  var ls = typeof localStorage !== 'undefined' ? localStorage : null;
+  var anthropicKey = ls ? (ls.getItem('anthropic_key') || '') : '';
   if (anthropicKey) {
     return { type: 'anthropic', token: anthropicKey };
   }
-  var ghToken = typeof localStorage !== 'undefined' ? (localStorage.getItem('github_token') || '') : '';
+  var openaiKey = ls ? (ls.getItem('openai_key') || '') : '';
+  if (openaiKey) {
+    return {
+      type: 'openai',
+      url: OPENAI_URL,
+      model: OPENAI_MODEL_ID,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + openaiKey
+      }
+    };
+  }
+  var ghToken = ls ? (ls.getItem('github_token') || '') : '';
   if (ghToken) {
     return {
       type: 'github',
       url: GH_MODELS_URL,
+      model: GH_MODEL_ID,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + ghToken
@@ -29,7 +45,8 @@ function getProvider() {
 export function getModelName() {
   var p = getProvider();
   if (!p) return 'no provider';
-  return p.type === 'anthropic' ? 'claude-sonnet-4-6' : GH_MODEL_ID;
+  if (p.type === 'anthropic') return 'claude-sonnet-4-6';
+  return p.model;
 }
 
 // ── Format conversion: Anthropic <-> OpenAI ────────────────────
@@ -240,7 +257,7 @@ async function agentLoop(ctx) {
 
     var provider = getProvider();
     if (!provider) {
-      ctx.agentLog('agent', 'No LLM configured. Sign in with GitHub or paste an Anthropic token.');
+      ctx.agentLog('agent', 'No LLM configured. Sign in with GitHub or paste an Anthropic or OpenAI key.');
       break;
     }
 
@@ -276,7 +293,7 @@ async function agentLoop(ctx) {
       }
     } else {
       var body = JSON.stringify({
-        model: GH_MODEL_ID,
+        model: provider.model,
         max_tokens: 200,
         messages: toOaiMessages(systemWithMemory, ctx.agentMessages),
         tools: toOaiTools(AGENT_TOOLS),
