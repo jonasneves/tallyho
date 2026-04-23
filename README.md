@@ -8,8 +8,6 @@
 
 AIPI 590.03 Intelligent Agents — Project 2.
 
-> **Status: in development.** Forked from catwatcher on 2026-04-22. Agent logic, tools, and eval dataset are still catwatcher-shaped as of this commit. Cataloger generalization is underway across subsequent slices.
-
 Hold up a Trader Joe's Corn Scented Candle (yellow cylinder, label prints "CAN OF CORN") and ask TallyHo to add it to your pantry inventory. The deep-learning arm refuses: the VLM captions the object faithfully as a candle, and Claude declines to catalog it. The classical arm is expected to accept it as a can: HSV says yellow, contours say cylinder, Tesseract reads the literal word "CAN". Three classical signals align on the wrong answer. That asymmetry is the finding. The deep-learning edge here is not detection speed but semantic refusal. TallyHo is a visual cataloger that walks through a scene via your phone's camera and builds a structured inventory of a target category (cans, for the Project 2 demo).
 
 Three-component agent per the Project 2 rubric:
@@ -116,7 +114,7 @@ make eval
 
 ### Results
 
-Live numbers land after Slice D. Current `results/eval/scores.json` reflects the inherited catwatcher run and does not describe TallyHo.
+Numbers populate when the evaluation harness runs against the can dataset. See `results/eval/scores.json` for the current run, and `data/eval/README.md` for the dataset schema.
 
 | Metric | DL arm | Classical arm |
 |---|---|---|

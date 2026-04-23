@@ -2,7 +2,7 @@
 
 AIPI 590.03 Intelligent Agents — Project 2: a visual cataloger that walks a scene with an operator and builds a structured inventory of a target category (cans, for the Project 2 demo). A small VLM (LFM2.5-VL-450M) runs in-browser via WebGPU for continuous perception. Claude reasons about the VLM output, guides the operator through the phone camera to get better angles, and records catalog entries. Two versions run against the same eval harness: a deep-learning arm (VLM + Claude) and a classical arm (HSV + contours + Tesseract legacy OCR).
 
-**Status:** Project 2 in development. Forked from catwatcher 2026-04-22. Team of two (Jonas + Atharva Jog). No grader deadline pinned yet. Optimize for portfolio-quality and honest eval, not for checking rubric boxes.
+Team: Jonas Neves and Atharva Jog. Optimize for portfolio-quality and honest eval over checking rubric boxes.
 
 ## Project structure
 
