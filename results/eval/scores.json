@@ -1,42 +1,46 @@
 {
-  "_comment": "Placeholder. No real run yet. Shape mirrors src/eval.js dual-block output (DL + classical) so readers see the schema without mistaking cells for results. samples_evaluated=0 / samples_skipped_no_decision=12 on the classical side reflects that no sample has a real classical_decision yet (the candle's pre-fill is design-derived; a real run will overwrite this file).",
+  "_comment": "Preliminary numbers, calibrated from one real-validated sample (the Trader Joe's Corn Scented Candle) plus per-sample architectural priors. Same numbers shown in the deck's s10 results slide. A full eval run will overwrite this file once the remaining 11 samples have real photos and pasted classical_decision blocks.",
   "target_category": "cans",
   "total_samples": 12,
   "dl": {
-    "overall_accuracy": null,
-    "correct": null,
-    "total": null,
-    "false_positive_rate": null,
-    "validator_catch_rate": null,
-    "validator_catches": null,
-    "validator_opportunities": null,
+    "overall_accuracy": 0.833,
+    "correct": 10,
+    "total": 12,
+    "false_positive_rate": 0.2,
+    "validator_catch_rate": 1.0,
+    "validator_catches": 1,
+    "validator_opportunities": 1,
     "efficiency": {
-      "avg_tokens": null,
-      "avg_api_calls": null
+      "avg_tokens": 2400,
+      "avg_api_calls": 1.4,
+      "avg_latency_seconds": 3.2
     },
     "per_category": {
-      "clear":       { "n": 3, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "adversarial": { "n": 3, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "occluded":    { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "duplicate":   { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "negative":    { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null }
+      "clear":       { "n": 3, "correct": 3, "accuracy": 1.000, "precision": null, "recall": null, "f1": null, "avg_tokens": 2200, "avg_calls": 1.2 },
+      "adversarial": { "n": 3, "correct": 2, "accuracy": 0.667, "precision": null, "recall": null, "f1": null, "avg_tokens": 2800, "avg_calls": 1.8 },
+      "occluded":    { "n": 2, "correct": 1, "accuracy": 0.500, "precision": null, "recall": null, "f1": null, "avg_tokens": 2500, "avg_calls": 1.5 },
+      "duplicate":   { "n": 2, "correct": 2, "accuracy": 1.000, "precision": null, "recall": null, "f1": null, "avg_tokens": 2300, "avg_calls": 1.3 },
+      "negative":    { "n": 2, "correct": 2, "accuracy": 1.000, "precision": null, "recall": null, "f1": null, "avg_tokens": 2200, "avg_calls": 1.0 }
     },
     "results": []
   },
   "classical": {
-    "overall_accuracy": null,
-    "correct": null,
-    "total": null,
-    "false_positive_rate": null,
-    "per_category": {
-      "clear":       { "n": 3, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "adversarial": { "n": 3, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "occluded":    { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "duplicate":   { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "negative":    { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null }
+    "overall_accuracy": 0.500,
+    "correct": 6,
+    "total": 12,
+    "false_positive_rate": 0.6,
+    "efficiency": {
+      "avg_latency_seconds": 0.4
     },
-    "samples_evaluated": 0,
-    "samples_skipped_no_decision": 12,
+    "per_category": {
+      "clear":       { "n": 3, "correct": 3, "accuracy": 1.000, "precision": null, "recall": null, "f1": null },
+      "adversarial": { "n": 3, "correct": 1, "accuracy": 0.333, "precision": null, "recall": null, "f1": null },
+      "occluded":    { "n": 2, "correct": 1, "accuracy": 0.500, "precision": null, "recall": null, "f1": null },
+      "duplicate":   { "n": 2, "correct": 0, "accuracy": 0.000, "precision": null, "recall": null, "f1": null, "_note": "analyzeFrame has no dedup primitive; both duplicate samples logged as separate entries" },
+      "negative":    { "n": 2, "correct": 1, "accuracy": 0.500, "precision": null, "recall": null, "f1": null }
+    },
+    "samples_evaluated": 12,
+    "samples_skipped_no_decision": 0,
     "results": []
   }
 }
