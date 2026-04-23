@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>classical-paste — analyzeFrame helper</title>
+<style>
+  :root {
+    --bg: #f5f5f5;
+    --surface: #ffffff;
+    --border: #d0d0d0;
+    --border-strong: #a8a8a8;
+    --text: #1a1a1a;
+    --muted: #666666;
+    --accent: #2563eb;
+    --accent-bg: #eef2ff;
+    --good: #15803d;
+    --bad: #b91c1c;
+    --code-bg: #1f1f1f;
+    --code-fg: #f5f5f5;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 96px;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  p.lede {
+    color: var(--muted);
+    margin: 0 0 24px;
+  }
+  code.inline {
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    background: #ececec;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  #drop {
+    border: 2px dashed var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface);
+    padding: 64px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 120ms, background 120ms;
+  }
+  #drop:hover { border-color: var(--accent); }
+  #drop.dragover {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+  }
+  #drop .big {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  #drop .small {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  #status {
+    margin: 16px 0 0;
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    min-height: 20px;
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+  }
+  #status.error {
+    color: var(--bad);
+    background: #fef2f2;
+    border-color: #fecaca;
+  }
+  #status:empty { display: none; }
+
+  #results {
+    display: none;
+    margin-top: 24px;
+  }
+  #results.visible { display: block; }
+
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) {
+    .panels { grid-template-columns: 1fr; }
+  }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .panel h2 {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .key {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .summary-row .val {
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  .badge-yes { color: var(--good); font-weight: 600; }
+  .badge-no  { color: var(--bad);  font-weight: 600; }
+
+  .preview-wrap {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+  }
+  #preview {
+    max-width: 100%;
+    max-height: 240px;
+    display: block;
+    border-radius: 4px;
+    background: #fafafa;
+  }
+
+  .json-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .json-head h2 { margin: 0; }
+  #copy-btn {
+    font-family: inherit;
+    font-size: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  #copy-btn:hover { background: #1d4ed8; }
+  #copy-btn:disabled { background: #9ca3af; cursor: default; }
+  pre#json-out {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 12px 14px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  #reasons {
+    margin-top: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  #reasons h2 {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  #reasons ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  #reasons li {
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: #333;
+    margin: 2px 0;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>classical-paste</h1>
+  <p class="lede">Drop a photo. Runs <code class="inline">analyzeFrame</code> from <code class="inline">src/classical.js</code>. Outputs the four-field <code class="inline">classical_decision</code> ready to paste into <code class="inline">data/eval/samples.json</code>.</p>
+
+  <div id="drop" tabindex="0">
+    <div class="big">Drop an image here</div>
+    <div class="small">or click to choose a file</div>
+    <input type="file" id="file-input" accept="image/*" hidden>
+  </div>
+
+  <div id="status"></div>
+
+  <section id="results">
+    <div class="panels">
+      <div class="panel">
+        <h2>Decision summary</h2>
+        <div class="summary-row"><span class="key">detected</span><span class="val" id="s-detected">—</span></div>
+        <div class="summary-row"><span class="key">label</span><span class="val" id="s-label">—</span></div>
+        <div class="summary-row"><span class="key">confidence</span><span class="val" id="s-confidence">—</span></div>
+        <div class="summary-row"><span class="key">latency_ms</span><span class="val" id="s-latency">—</span></div>
+        <div class="preview-wrap">
+          <img id="preview" alt="dropped image preview">
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="json-head">
+          <h2>JSON to paste</h2>
+          <button id="copy-btn">Copy</button>
+        </div>
+        <pre id="json-out"></pre>
+      </div>
+    </div>
+
+    <div id="reasons">
+      <h2>Reasons</h2>
+      <ul id="reasons-list"></ul>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { analyzeFrame } from '../src/classical.js';
+
+const dropEl     = document.getElementById('drop');
+const fileInput  = document.getElementById('file-input');
+const statusEl   = document.getElementById('status');
+const resultsEl  = document.getElementById('results');
+const previewEl  = document.getElementById('preview');
+const sDetected  = document.getElementById('s-detected');
+const sLabel     = document.getElementById('s-label');
+const sConf      = document.getElementById('s-confidence');
+const sLatency   = document.getElementById('s-latency');
+const jsonOut    = document.getElementById('json-out');
+const copyBtn    = document.getElementById('copy-btn');
+const reasonsUl  = document.getElementById('reasons-list');
+
+let firstRun = true;
+let busy = false;
+
+function setStatus(msg, isError) {
+  statusEl.textContent = msg || '';
+  statusEl.classList.toggle('error', !!isError);
+}
+
+function clearResults() {
+  resultsEl.classList.remove('visible');
+  jsonOut.textContent = '';
+  reasonsUl.innerHTML = '';
+  sDetected.textContent = '—';
+  sLabel.textContent = '—';
+  sConf.textContent = '—';
+  sLatency.textContent = '—';
+  copyBtn.textContent = 'Copy';
+  copyBtn.disabled = false;
+  previewEl.removeAttribute('src');
+}
+
+dropEl.addEventListener('click', () => fileInput.click());
+dropEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+});
+
+fileInput.addEventListener('change', (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (f) handleFile(f);
+  fileInput.value = '';
+});
+
+['dragenter', 'dragover'].forEach((ev) => {
+  dropEl.addEventListener(ev, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropEl.classList.add('dragover');
+  });
+});
+['dragleave', 'drop'].forEach((ev) => {
+  dropEl.addEventListener(ev, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (ev === 'dragleave' && e.target !== dropEl) return;
+    dropEl.classList.remove('dragover');
+  });
+});
+dropEl.addEventListener('drop', (e) => {
+  const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) handleFile(f);
+});
+
+// Block the browser's default "open this image" on drops outside the zone.
+window.addEventListener('dragover', (e) => e.preventDefault());
+window.addEventListener('drop', (e) => e.preventDefault());
+
+async function handleFile(file) {
+  if (busy) return;
+  if (!file.type.startsWith('image/')) {
+    setStatus('Not an image: ' + file.type, true);
+    return;
+  }
+  busy = true;
+  clearResults();
+
+  const previewUrl = URL.createObjectURL(file);
+  previewEl.src = previewUrl;
+
+  setStatus(firstRun ? 'Loading models (OpenCV + Tesseract, ~15MB on first run)...' : 'Decoding image...');
+
+  try {
+    const bitmap = await createImageBitmap(file);
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    canvas.getContext('2d').drawImage(bitmap, 0, 0);
+
+    setStatus(firstRun ? 'Loading models + analyzing...' : 'Analyzing...');
+
+    const decision = await analyzeFrame(canvas, { withOCR: true });
+    firstRun = false;
+    renderDecision(decision);
+    setStatus('Done in ' + (decision.latency_ms || 0).toFixed(0) + ' ms.');
+  } catch (err) {
+    console.error(err);
+    setStatus(
+      'Error: ' + (err && err.message ? err.message : String(err)) +
+      '\n\nHint: OpenCV.js or Tesseract.js may have failed to load. Check the browser console for the underlying error.',
+      true
+    );
+  } finally {
+    busy = false;
+  }
+}
+
+function renderDecision(decision) {
+  const pasteShape = {
+    detected:   decision.detected,
+    label:      decision.label,
+    confidence: Math.round((decision.confidence || 0) * 1000) / 1000,
+    reasons:    decision.reasons || []
+  };
+
+  sDetected.innerHTML = decision.detected
+    ? '<span class="badge-yes">YES</span>'
+    : '<span class="badge-no">NO</span>';
+  sLabel.textContent     = decision.label ? JSON.stringify(decision.label) : 'null';
+  sConf.textContent      = (decision.confidence || 0).toFixed(3);
+  sLatency.textContent   = (decision.latency_ms || 0).toFixed(0) + ' ms';
+
+  jsonOut.textContent = JSON.stringify(pasteShape, null, 2);
+
+  reasonsUl.innerHTML = '';
+  (decision.reasons || []).forEach((r) => {
+    const li = document.createElement('li');
+    li.textContent = r;
+    reasonsUl.appendChild(li);
+  });
+
+  resultsEl.classList.add('visible');
+}
+
+copyBtn.addEventListener('click', async () => {
+  const text = jsonOut.textContent;
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    copyBtn.textContent = 'Copied';
+    copyBtn.disabled = true;
+    setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.disabled = false; }, 1200);
+  } catch (err) {
+    setStatus('Clipboard write failed: ' + err.message, true);
+  }
+});
+</script>
+</body>
+</html>
