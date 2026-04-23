@@ -292,13 +292,16 @@ async function agentLoop(ctx) {
         break;
       }
     } else {
-      var body = JSON.stringify({
+      var payload = {
         model: provider.model,
-        max_tokens: 200,
         messages: toOaiMessages(systemWithMemory, ctx.agentMessages),
         tools: toOaiTools(AGENT_TOOLS),
         tool_choice: 'auto'
-      });
+      };
+      // OpenAI's newer models require max_completion_tokens; GitHub Models still uses max_tokens.
+      if (provider.type === 'openai') payload.max_completion_tokens = 200;
+      else payload.max_tokens = 200;
+      var body = JSON.stringify(payload);
       var response = await fetch(provider.url, {
         method: 'POST',
         headers: provider.headers,
