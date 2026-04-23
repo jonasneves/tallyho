@@ -518,6 +518,7 @@ body.live .session-telemetry { display: inline-flex; }
 /* ── Shared components ─────────────────────────────── */
 
 .field { width: 100%; }
+.field + .field { margin-top: 12px; }
 .field label {
   display: block;
   font-size: var(--text-micro);
