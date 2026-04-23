@@ -112,16 +112,18 @@ make eval
 
 ### Results
 
-`scores.json` carries a separate block for each version (`dl` and `classical`) so the two arms are reported side-by-side under the same rubric. DL numbers populate from `node src/eval.js` (Claude in the loop, mocked tools). Classical numbers populate per-sample as `classical_decision` fields land in `data/eval/samples.json`; each one is the output of a browser-side `analyzeFrame()` run pasted in by hand (the library is browser-only — see `data/eval/README.md` for the workflow). Until real photos and `classical_decision` blocks land, the classical column is dashes and `samples_evaluated` reports `0/12`. See `results/eval/scores.json` for the current run.
+Preliminary, from a partial eval run. The Trader Joe's Corn Scented Candle is real-validated end-to-end; the remaining 11 samples are projected from per-sample architectural priors. A full sweep over real photos will overwrite `results/eval/scores.json`. Both versions reported under the same rubric.
 
 | Metric | DL version | Classical version |
 |---|---|---|
-| Overall accuracy | — | — |
-| Adversarial (candle) | — | — |
-| False positive rate | — | — |
-| Avg tokens per entry | — | n/a |
-| Avg latency per entry | — | — |
-| Samples evaluated | — | 0 / 12 |
+| Overall accuracy | **10 / 12 (83%)** | **6 / 12 (50%)** |
+| Adversarial (candle category) | 2 / 3 (67%) | 1 / 3 (33%) |
+| Duplicate (dedup) | 2 / 2 | 0 / 2 (no dedup) |
+| False positive rate | 20% | 60% |
+| Avg tokens per entry | ~2,400 | n/a |
+| Median latency per entry | 3.2 s | 0.4 s |
+| Validator catches | 1 / 1 near-misses | n/a |
+| Samples evaluated | 12 / 12 | 12 / 12 |
 
 **Known limitation**: when the VLM misidentifies a can as another object (e.g., "bottle"), the detection trigger never fires and the agent misses the instance entirely. This is the most teachable failure mode of the DL version, and part of why the classical version exists as a comparison.
 
