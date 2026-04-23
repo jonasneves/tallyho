@@ -86,12 +86,20 @@ var VLM_MODEL = 'LiquidAI/LFM2.5-VL-450M-ONNX';
 // Wake the agent on any VLM phrasing that might refer to the target category. Vocabulary is broader than the category word alone because the VLM often describes a can without using "can" (e.g. "tin", "aluminum container", "beverage").
 var TARGET_PATTERN = /\b(cans?|tins?|aluminum|beverage|soda|container)\b/i;
 
+function refreshProviderIndicators() {
+  var label = document.querySelector('#agent-panel .agent-model');
+  if (label) label.textContent = getModelName();
+  var hint = document.getElementById('active-provider');
+  if (hint) hint.textContent = getModelName();
+}
+
 function saveApiKey(value) {
   if (value.trim()) {
     localStorage.setItem('anthropic_key', value.trim());
   } else {
     localStorage.removeItem('anthropic_key');
   }
+  refreshProviderIndicators();
 }
 
 function saveOpenaiKey(value) {
@@ -100,6 +108,7 @@ function saveOpenaiKey(value) {
   } else {
     localStorage.removeItem('openai_key');
   }
+  refreshProviderIndicators();
 }
 
 function loadApiKey() {
@@ -156,7 +165,7 @@ async function renderGitHubStatus() {
         '<input id="openai-key-input" type="password" placeholder="sk-…" value="' + escapeHtml(openaiKey) + '" oninput="saveOpenaiKey(this.value)" />' +
       '</div>' +
     '</form>' +
-    '<p class="settings-hint">Anthropic routes via proxy.neevs.io. OpenAI calls <code>api.openai.com</code> directly. Anthropic takes precedence if both are set.</p>';
+    '<p class="settings-hint">Active model: <code id="active-provider">' + getModelName() + '</code>. Anthropic routes via proxy.neevs.io; OpenAI calls <code>api.openai.com</code> directly. Anthropic takes precedence if both are set — clear that field to use OpenAI.</p>';
 
   if (token) {
     container.innerHTML =
