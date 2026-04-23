@@ -1,6 +1,6 @@
 # CLAUDE.md — TallyHo
 
-AIPI 590.03 Intelligent Agents — Project 2: a visual cataloger that walks a scene with an operator and builds a structured inventory of a target category (cans, for the Project 2 demo). A small VLM (LFM2.5-VL-450M) runs in-browser via WebGPU for continuous perception. Claude reasons about the VLM output, guides the operator through the phone camera to get better angles, and records catalog entries. Two versions run against the same eval harness: a deep-learning arm (VLM + Claude) and a classical arm (HSV + contours + Tesseract legacy OCR).
+AIPI 590.03 Intelligent Agents — Project 2: a visual cataloger that walks a scene with an operator and builds a structured inventory of a target category (cans, for the Project 2 demo). A small VLM (LFM2.5-VL-450M) runs in-browser via WebGPU for continuous perception. Claude reasons about the VLM output, guides the operator through the phone camera to get better angles, and records catalog entries. Two versions run against the same eval harness: a deep-learning version (VLM + Claude) and a classical version (HSV + contours + Tesseract legacy OCR).
 
 Team: Jonas Neves and Atharva Jog. Optimize for portfolio-quality and honest eval over checking rubric boxes.
 
@@ -29,7 +29,7 @@ scripts/
 
 ## Architecture
 
-Phone streams camera via WebRTC (raw, signal.neevs.io for signaling) to desktop. Desktop runs LFM2.5-VL-450M via WebGPU and emits a caption every ~2s. A keyword gate (`TARGET_PATTERN` in `app.js`) decides when the caption is worth waking Claude; otherwise the caption is discarded and the VLM keeps looping. When the gate fires, Claude reads the caption and picks from the tools listed in `src/tools.js`: redirect the VLM with a neutral observation directive, pull the raw frame for direct inspection, or record a catalog entry. The signature behavior is refusal. Most gate firings end with Claude deciding the frame is not actually in-category and logging a short rejection reason to scene memory instead of capturing. A scented candle shaped like a can of corn, matching on shape, color, and label text, is the canonical rejection. This capacity for semantic refusal is the asymmetry that distinguishes the DL arm from the classical arm, which has no path to say "shaped like a can but not a can".
+Phone streams camera via WebRTC (raw, signal.neevs.io for signaling) to desktop. Desktop runs LFM2.5-VL-450M via WebGPU and emits a caption every ~2s. A keyword gate (`TARGET_PATTERN` in `app.js`) decides when the caption is worth waking Claude; otherwise the caption is discarded and the VLM keeps looping. When the gate fires, Claude reads the caption and picks from the tools listed in `src/tools.js`: redirect the VLM with a neutral observation directive, pull the raw frame for direct inspection, or record a catalog entry. The signature behavior is refusal. Most gate firings end with Claude deciding the frame is not actually in-category and logging a short rejection reason to scene memory instead of capturing. A scented candle shaped like a can of corn, matching on shape, color, and label text, is the canonical rejection. This capacity for semantic refusal is the asymmetry that distinguishes the DL version from the classical version, which has no path to say "shaped like a can but not a can".
 
 ## Tools
 
@@ -41,7 +41,7 @@ See `src/tools.js` for the live set of tool definitions. Each tool's description
 - LLM provider selected at runtime: pasted Claude token (via proxy.neevs.io) OR GitHub Models (gpt-4o)
 - Tools live in `src/tools.js`; count is not a constraint
 - Web UI with P2P video streaming, agent log, captures diary
-- Quantitative evaluation with defined metric and results, DL arm vs. classical arm on the same dataset
+- Quantitative evaluation with defined metric and results, DL version vs. classical version on the same dataset
 
 ## Deploy
 

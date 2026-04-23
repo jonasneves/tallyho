@@ -8,7 +8,7 @@
 
 AIPI 590.03 Intelligent Agents — Project 2.
 
-Hold up a Trader Joe's Corn Scented Candle (yellow cylinder, label prints "CAN OF CORN") and ask TallyHo to add it to your pantry inventory. The deep-learning arm refuses: the VLM captions the object faithfully as a candle, and Claude declines to catalog it. The classical arm is expected to accept it as a can: HSV says yellow, contours say cylinder, Tesseract reads the literal word "CAN". Three classical signals align on the wrong answer. That asymmetry is the finding. The deep-learning edge here is not detection speed but semantic refusal. TallyHo is a visual cataloger that walks through a scene via your phone's camera and builds a structured inventory of a target category (cans, for the Project 2 demo).
+Hold up a Trader Joe's Corn Scented Candle (yellow cylinder, label prints "CAN OF CORN") and ask TallyHo to add it to your pantry inventory. The deep-learning version refuses: the VLM captions the object faithfully as a candle, and Claude declines to catalog it. The classical version is expected to accept it as a can: HSV says yellow, contours say cylinder, Tesseract reads the literal word "CAN". Three classical signals align on the wrong answer. That asymmetry is the finding. The deep-learning edge here is not detection speed but semantic refusal. TallyHo is a visual cataloger that walks through a scene via your phone's camera and builds a structured inventory of a target category (cans, for the Project 2 demo).
 
 Three-component agent per the Project 2 rubric:
 - **Perception** — VLM describes each frame (non-text modality: live camera via WebRTC)
@@ -33,11 +33,11 @@ Three-component agent per the Project 2 rubric:
 
 Neither device can do the task alone. The phone owns the sensor and the operator interface; the desktop owns the compute (WebGPU VLM) and the reasoning (Claude).
 
-### Two arms
+### Two versions
 
 Two implementations run against the same eval harness and the same target category, compared side-by-side.
 
-| Axis | DL arm | Classical arm |
+| Axis | DL version | Classical version |
 |---|---|---|
 | Perception | LFM2.5-VL-450M (WebGPU, in-browser) | HSV histogram + contours (OpenCV.js) |
 | Planning | Claude Sonnet, tool-calling | rule-based scoring |
@@ -52,7 +52,6 @@ Two implementations run against the same eval harness and the same target catego
 | `set_vlm_prompt` | shipped | Change what the VLM looks for (adaptive prompting) |
 | `capture_frame` | shipped | Save the current frame with VLM validation |
 | `check_image` | shipped | Send frame to Claude for direct visual analysis |
-| `update_memory` | shipped | Persist observations across detection cycles |
 | `guide_operator` | shipped | Push an overlay message to the phone camera (e.g. "step closer", "rotate to show the label") |
 | `check_catalog_match` | shipped | Dedup against already-catalogued entries before capture |
 
@@ -66,8 +65,7 @@ src/
   peer.js               WebRTC pairing, signaling, data channel
   agent.js              agent loop (Claude API, reasoning, memory)
   tools.js              tool definitions and execution
-  eval.js               evaluation harness (JS)
-  eval.py               evaluation harness (Python)
+  eval.js               evaluation harness
 data/eval/              evaluation dataset
 results/eval/           scores.json (committed)
 ```
@@ -97,7 +95,7 @@ URL state:
 
 ## Evaluation
 
-~30 scenarios targeting cans, across five categories. Both arms run through the same harness.
+~30 scenarios targeting cans, across five categories. Both versions run through the same harness.
 
 | Category | What it tests | Minimum N |
 |---|---|---|
@@ -116,7 +114,7 @@ make eval
 
 Numbers populate when the evaluation harness runs against the can dataset. See `results/eval/scores.json` for the current run, and `data/eval/README.md` for the dataset schema.
 
-| Metric | DL arm | Classical arm |
+| Metric | DL version | Classical version |
 |---|---|---|
 | Overall accuracy | — | — |
 | Adversarial (candle) | — | — |
@@ -124,7 +122,7 @@ Numbers populate when the evaluation harness runs against the can dataset. See `
 | Avg tokens per entry | — | n/a |
 | Avg latency per entry | — | — |
 
-**Known limitation**: when the VLM misidentifies a can as another object (e.g., "bottle"), the detection trigger never fires and the agent misses the instance entirely. This is the most teachable failure mode of the DL arm, and part of why the classical arm exists as a comparison.
+**Known limitation**: when the VLM misidentifies a can as another object (e.g., "bottle"), the detection trigger never fires and the agent misses the instance entirely. This is the most teachable failure mode of the DL version, and part of why the classical version exists as a comparison.
 
 ## Team
 

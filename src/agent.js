@@ -138,7 +138,7 @@ var AGENT_SYSTEM_BASE = [
   'Rules:',
   '- Check memory first. Same item catalogued recently? Say "Already catalogued" and STOP.',
   '- If memory says "scene: [X]", trust it and do not re-verify with check_image.',
-  '- capture_frame already saves to memory. Do NOT call update_memory separately.',
+  '- capture_frame already saves to memory. No separate memory tool.',
   '- If no in-category item is visible, or the VLM is describing a screen/monitor, say so and STOP.',
   '',
   'Response format: **Decision** in ≤8 words, then one short diary-style reason if non-obvious. Examples:',

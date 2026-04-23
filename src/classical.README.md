@@ -1,6 +1,6 @@
 # classical.js
 
-Classical CV arm for TallyHo: HSV color pass + contour/shape pass + Tesseract legacy OCR. Cans-specific, rule-based, pre-deep-learning.
+Classical CV version for TallyHo: HSV color pass + contour/shape pass + Tesseract legacy OCR. Cans-specific, rule-based, pre-deep-learning.
 
 ## API
 
@@ -62,7 +62,7 @@ console.log(decision.detected, decision.label, decision.reasons);
 
 ## Known failure modes
 
-- **Will false-positive on can-shaped non-cans with can-like labels.** The Trader Joe's Corn Scented Candle (yellow cylinder, label prints "CAN OF CORN") is the canonical example. HSV says yellow, contours say cylinder, Tesseract reads the word "CAN". Three signals align on the wrong answer. **This is by design;** the DL arm exists to catch exactly this class of error through semantic refusal. Do not add semantic checks here.
+- **Will false-positive on can-shaped non-cans with can-like labels.** The Trader Joe's Corn Scented Candle (yellow cylinder, label prints "CAN OF CORN") is the canonical example. HSV says yellow, contours say cylinder, Tesseract reads the word "CAN". Three signals align on the wrong answer. **This is by design;** the DL version exists to catch exactly this class of error through semantic refusal. Do not add semantic checks here.
 - Silver/metallic cans are weak for HSV and rely on the shape signal alone. Expect lower recall on tuna and sardine cans under neutral lighting.
 - Heavy occlusion breaks the contour pass before the other signals get a chance.
 - Bottle-shaped containers with can-like labels will usually be rejected by the aspect-ratio gate (`ASPECT_MAX = 2.6`), though tall cans push that ceiling.
