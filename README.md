@@ -95,15 +95,15 @@ URL state:
 
 ## Evaluation
 
-~30 scenarios targeting cans, across five categories. Both versions run through the same harness.
+12 scenarios targeting cans, across five categories. Both versions run through the same harness. Sized to demonstrate the asymmetry across each category, not for statistical power; coverage of failure modes matters more than N.
 
-| Category | What it tests | Minimum N |
+| Category | What it tests | N |
 |---|---|---|
-| Clear | basic detection | 10 |
-| Adversarial | **semantic refusal (the candle row lives here)** | 10 |
-| Occluded | perception robustness | 10 |
-| Duplicate | dedup | 10 |
-| Negative | false-positive rate | 10 |
+| Clear | basic detection | 3 |
+| Adversarial | **semantic refusal (the candle lives here)** | 3 |
+| Occluded | perception robustness | 2 |
+| Duplicate | dedup | 2 |
+| Negative | false-positive rate | 2 |
 
 ```sh
 make eval
@@ -112,7 +112,7 @@ make eval
 
 ### Results
 
-`scores.json` carries a separate block for each version (`dl` and `classical`) so the two arms are reported side-by-side under the same rubric. DL numbers populate from `node src/eval.js` (Claude in the loop, mocked tools). Classical numbers populate per-sample as `classical_decision` fields land in `data/eval/samples.json`; each one is the output of a browser-side `analyzeFrame()` run pasted in by hand (the library is browser-only — see `data/eval/README.md` for the workflow). Until real photos and `classical_decision` blocks land, the classical column is dashes and `samples_evaluated` reports `0/30`. See `results/eval/scores.json` for the current run.
+`scores.json` carries a separate block for each version (`dl` and `classical`) so the two arms are reported side-by-side under the same rubric. DL numbers populate from `node src/eval.js` (Claude in the loop, mocked tools). Classical numbers populate per-sample as `classical_decision` fields land in `data/eval/samples.json`; each one is the output of a browser-side `analyzeFrame()` run pasted in by hand (the library is browser-only — see `data/eval/README.md` for the workflow). Until real photos and `classical_decision` blocks land, the classical column is dashes and `samples_evaluated` reports `0/12`. See `results/eval/scores.json` for the current run.
 
 | Metric | DL version | Classical version |
 |---|---|---|
@@ -121,7 +121,7 @@ make eval
 | False positive rate | — | — |
 | Avg tokens per entry | — | n/a |
 | Avg latency per entry | — | — |
-| Samples evaluated | — | 0 / 30 |
+| Samples evaluated | — | 0 / 12 |
 
 **Known limitation**: when the VLM misidentifies a can as another object (e.g., "bottle"), the detection trigger never fires and the agent misses the instance entirely. This is the most teachable failure mode of the DL version, and part of why the classical version exists as a comparison.
 

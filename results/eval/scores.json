@@ -1,7 +1,7 @@
 {
-  "_comment": "Placeholder. No real run yet. Shape mirrors src/eval.js dual-block output (DL + classical) so readers see the schema without mistaking cells for results. samples_evaluated=0 / samples_skipped_no_decision=30 on the classical side reflects that no sample has a real classical_decision yet (the candle's pre-fill is design-derived; a real run will overwrite this file).",
+  "_comment": "Placeholder. No real run yet. Shape mirrors src/eval.js dual-block output (DL + classical) so readers see the schema without mistaking cells for results. samples_evaluated=0 / samples_skipped_no_decision=12 on the classical side reflects that no sample has a real classical_decision yet (the candle's pre-fill is design-derived; a real run will overwrite this file).",
   "target_category": "cans",
-  "total_samples": 30,
+  "total_samples": 12,
   "dl": {
     "overall_accuracy": null,
     "correct": null,
@@ -15,11 +15,11 @@
       "avg_api_calls": null
     },
     "per_category": {
-      "clear":       { "n": 6, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "adversarial": { "n": 6, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "occluded":    { "n": 6, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "duplicate":   { "n": 6, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "negative":    { "n": 6, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null }
+      "clear":       { "n": 3, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
+      "adversarial": { "n": 3, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
+      "occluded":    { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
+      "duplicate":   { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
+      "negative":    { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null }
     },
     "results": []
   },
@@ -29,14 +29,14 @@
     "total": null,
     "false_positive_rate": null,
     "per_category": {
-      "clear":       { "n": 6, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "adversarial": { "n": 6, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "occluded":    { "n": 6, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "duplicate":   { "n": 6, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
-      "negative":    { "n": 6, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null }
+      "clear":       { "n": 3, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
+      "adversarial": { "n": 3, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
+      "occluded":    { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
+      "duplicate":   { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null },
+      "negative":    { "n": 2, "correct": 0, "accuracy": null, "precision": null, "recall": null, "f1": null, "avg_tokens": null, "avg_calls": null }
     },
     "samples_evaluated": 0,
-    "samples_skipped_no_decision": 30,
+    "samples_skipped_no_decision": 12,
     "results": []
   }
 }

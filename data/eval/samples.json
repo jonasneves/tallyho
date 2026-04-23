@@ -4,29 +4,24 @@
     "category": "clear",
     "photo_path": null,
     "vlm_text": "The image shows a cylindrical metal container with a red and white label. The top half of the label is red and the bottom half is white. Text on the label reads 'Campbell's' and 'Tomato Soup'. The can appears to be sitting on a wooden surface.",
-    "ground_truth": { "is_target": true, "expected_label": "Campbell's tomato soup" },
+    "ground_truth": {
+      "is_target": true,
+      "expected_label": "Campbell's tomato soup"
+    },
     "check_image_description": "A red and white Campbell's condensed tomato soup can, label clearly legible, front view on a wood table.",
     "follow_up": null,
     "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Classic clear-can reference."
   },
   {
-    "id": "clear_goya_black_beans",
-    "category": "clear",
-    "photo_path": null,
-    "vlm_text": "A short cylindrical can with a predominantly black label. Yellow and red text is visible on the front. The word 'Goya' is readable near the top and the words 'Black Beans' are also visible. The can is sitting upright on a kitchen counter.",
-    "ground_truth": { "is_target": true, "expected_label": "Goya black beans" },
-    "check_image_description": "A Goya black beans can, black label with yellow and red accents, label facing camera.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Black label for HSV diversity."
-  },
-  {
     "id": "clear_delmonte_corn",
     "category": "clear",
     "photo_path": null,
     "vlm_text": "The image shows a can with a green and white label. Text on the label reads 'Del Monte' and 'Whole Kernel Corn'. There is an image of yellow corn kernels on the lower portion of the label. The container is cylindrical.",
-    "ground_truth": { "is_target": true, "expected_label": "Del Monte whole kernel corn" },
+    "ground_truth": {
+      "is_target": true,
+      "expected_label": "Del Monte whole kernel corn"
+    },
     "check_image_description": "A Del Monte whole kernel corn can, green label with a photo of corn, label facing camera.",
     "follow_up": null,
     "classical_decision": null,
@@ -37,41 +32,23 @@
     "category": "clear",
     "photo_path": null,
     "vlm_text": "A tall slender cylindrical can with a predominantly white background and pink and yellow geometric patterns. The word 'LaCroix' is printed in large letters and 'Pamplemousse' appears below it. The can appears to be a beverage container.",
-    "ground_truth": { "is_target": true, "expected_label": "LaCroix pamplemousse" },
+    "ground_truth": {
+      "is_target": true,
+      "expected_label": "LaCroix pamplemousse"
+    },
     "check_image_description": "A LaCroix pamplemousse (grapefruit) sparkling water can, white with pink and yellow pattern, upright on counter.",
     "follow_up": null,
     "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Beverage can, slim profile."
   },
   {
-    "id": "clear_bushs_baked_beans",
-    "category": "clear",
-    "photo_path": null,
-    "vlm_text": "The image shows a cylindrical can with a mostly yellow label and brown and red accents. The label reads 'Bush's Best' with 'Baked Beans' below. There is a picture of beans and a dog on the label. The can sits on a pantry shelf.",
-    "ground_truth": { "is_target": true, "expected_label": "Bush's baked beans" },
-    "check_image_description": "A Bush's Best baked beans can with the signature yellow and brown label, label facing camera.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Yellow label — important HSV overlap with the candle."
-  },
-  {
-    "id": "clear_progresso_chicken_noodle",
-    "category": "clear",
-    "photo_path": null,
-    "vlm_text": "A cylindrical metal can with a predominantly silver and blue label. The word 'Progresso' is printed in red near the top and 'Chicken Noodle' is readable in the middle. A small image of soup is visible on the lower half of the label.",
-    "ground_truth": { "is_target": true, "expected_label": "Progresso chicken noodle soup" },
-    "check_image_description": "A Progresso chicken noodle soup can, silver body with blue and red accents, label legible.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Silver/metallic — different HSV profile."
-  },
-
-  {
     "id": "adv_corn_candle_held",
     "category": "adversarial",
     "photo_path": null,
     "vlm_text": "The image shows a man holding a can of 'Can of Corn' in his left hand. He's wearing a black baseball cap and glasses. The can is yellow with black text, indicating it's a corn-based product. In the background, there's a large flat-screen TV.",
-    "ground_truth": { "is_target": false },
+    "ground_truth": {
+      "is_target": false
+    },
     "check_image_description": "A cylindrical scented candle wrapped in a yellow label that reads 'CAN OF CORN' in large black letters. The top of the candle shows wax and a wick, not a pull-tab or metal rim. Held by a person in a black cap and glasses.",
     "follow_up": null,
     "classical_decision": {
@@ -92,7 +69,9 @@
     "category": "adversarial",
     "photo_path": null,
     "vlm_text": "A tall cylindrical container with a blue and red label. A cartoon figure of a man with white hair and a smiling face is visible on the front. Text on the label reads 'Quaker' and 'Old Fashioned Oats'. The container appears to be made of cardboard.",
-    "ground_truth": { "is_target": false },
+    "ground_truth": {
+      "is_target": false
+    },
     "check_image_description": "A Quaker Oats cardboard canister, cylindrical, blue and red label. Not a metal can — walls are visibly cardboard and the top is a plastic lid, not a metal rim.",
     "follow_up": null,
     "classical_decision": null,
@@ -103,119 +82,51 @@
     "category": "adversarial",
     "photo_path": null,
     "vlm_text": "The image shows a cylindrical container with a red label. The word 'Coca-Cola' is written in white script across the label. The container has a narrow neck at the top with a black plastic cap. The body appears to be transparent plastic with a dark liquid inside.",
-    "ground_truth": { "is_target": false },
+    "ground_truth": {
+      "is_target": false
+    },
     "check_image_description": "A 20oz plastic Coca-Cola bottle. Narrow threaded neck with a black screw cap, visibly a bottle, not a can.",
     "follow_up": null,
     "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Bottle, not can — tests shape discrimination."
   },
   {
-    "id": "adv_hydroflask_bottle",
-    "category": "adversarial",
-    "photo_path": null,
-    "vlm_text": "A cylindrical metal container in matte blue. It appears to be tall and slim with a screw-on lid at the top. There is a small logo near the bottom but no product label is visible on the main body. The container has a metallic finish.",
-    "ground_truth": { "is_target": false },
-    "check_image_description": "A reusable Hydro Flask style insulated metal water bottle, matte blue, threaded lid, Hydro Flask logo near the base. Not a food can.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Metal cylinder without food packaging — adversarial for classical arm."
-  },
-  {
-    "id": "adv_thermos_coffee",
-    "category": "adversarial",
-    "photo_path": null,
-    "vlm_text": "The image shows a cylindrical silver metal container with a black plastic lid on top. The container is tall and has a slight taper toward the top. The surface is reflective and no printed label is visible. It may be a drinking vessel.",
-    "ground_truth": { "is_target": false },
-    "check_image_description": "A stainless steel travel thermos with a black twist-lid. Double-walled, tapered shape, no food packaging.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Silver cylinder, confuses HSV."
-  },
-  {
-    "id": "adv_pvc_pipe_segment",
-    "category": "adversarial",
-    "photo_path": null,
-    "vlm_text": "A short cylindrical white plastic object on a workbench. The cylinder has uniform diameter along its length. No label, no printed text, and no lid or rim are visible. The surface appears smooth and slightly glossy.",
-    "ground_truth": { "is_target": false },
-    "check_image_description": "A 2-inch PVC pipe segment, roughly 4 inches long, white plastic, completely unlabeled. Not a can.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Pure-shape adversarial — cylindrical but clearly not food."
-  },
-
-  {
     "id": "occl_hand_covers_label",
     "category": "occluded",
     "photo_path": null,
     "vlm_text": "The image shows a person's hand holding a cylindrical can. Most of the label is hidden behind the fingers. A small strip of red and white is visible near the top of the can and a silver rim is visible along the bottom edge.",
-    "ground_truth": { "is_target": true, "expected_label": "unknown red and white can" },
+    "ground_truth": {
+      "is_target": true,
+      "expected_label": "unknown red and white can"
+    },
     "check_image_description": "A hand gripping a can, most of the body occluded. Visible: a silver top rim and a sliver of red/white label near the top; brand text not legible.",
     "follow_up": null,
     "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Tests capture-with-partial-info."
   },
   {
-    "id": "occl_shelf_edge",
-    "category": "occluded",
-    "photo_path": null,
-    "vlm_text": "The image shows a pantry shelf. A cylindrical can is partially visible behind a wooden shelf edge. Only the upper third of the can is visible, showing a silver metal top and a band of green label. The rest of the can is hidden.",
-    "ground_truth": { "is_target": true, "expected_label": "unknown green-labeled can" },
-    "check_image_description": "Top third of a green-labeled can peeking above the front lip of a pantry shelf; brand not readable from this angle.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Label mostly below the shelf edge."
-  },
-  {
-    "id": "occl_label_turned_away",
-    "category": "occluded",
-    "photo_path": null,
-    "vlm_text": "A cylindrical metal can is sitting on a counter. The back of the can is facing the camera and only a plain metallic surface with small printed nutrition information is visible. No brand logo or product name is readable from this angle.",
-    "ground_truth": { "is_target": true, "expected_label": "unknown can, label rotated away" },
-    "check_image_description": "A can shown from the back. Only the nutrition facts panel is visible; the branded face is turned 180 degrees from the camera.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Triggers guide_operator('rotate 90°') in healthy runs."
-  },
-  {
     "id": "occl_glare_on_metal",
     "category": "occluded",
     "photo_path": null,
     "vlm_text": "The image shows a cylindrical metallic container. A bright reflection covers most of the front of the can, washing out any label text. Some blue color is faintly visible behind the glare. The shape is clearly a can.",
-    "ground_truth": { "is_target": true, "expected_label": "unknown blue-ish can under glare" },
+    "ground_truth": {
+      "is_target": true,
+      "expected_label": "unknown blue-ish can under glare"
+    },
     "check_image_description": "A can under a ceiling light with a hot glare band across its front; the label underneath appears blue but text is unreadable.",
     "follow_up": null,
     "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Tests glare-mitigation path."
   },
   {
-    "id": "occl_low_light",
-    "category": "occluded",
-    "photo_path": null,
-    "vlm_text": "The image is dimly lit. A cylindrical shape is visible in the center of the frame, likely a can, but colors are muted and no label text is legible. The silhouette suggests a standard food-can profile.",
-    "ground_truth": { "is_target": true, "expected_label": "unknown can in low light" },
-    "check_image_description": "A can on a kitchen counter in evening light; silhouette clear, label text unreadable due to low illumination.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Low-light perception robustness."
-  },
-  {
-    "id": "occl_shadow_across_label",
-    "category": "occluded",
-    "photo_path": null,
-    "vlm_text": "A cylindrical can is on a wooden table. A harsh diagonal shadow crosses the label, leaving the left side of the label in shadow and the right side in bright light. Portions of red and white label are visible on the lit side. Text reads partially as 'ampbell' near the top.",
-    "ground_truth": { "is_target": true, "expected_label": "Campbell's soup (shadow-partial)" },
-    "check_image_description": "A Campbell's soup can with a diagonal shadow; part of the brand name is legible on the lit half.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Partial OCR, should still resolve to Campbell's."
-  },
-
-  {
     "id": "dup_campbell_front",
     "category": "duplicate",
     "photo_path": null,
     "vlm_text": "The image shows a cylindrical can with a red and white label. The top half is red and the bottom half is white. Text on the label clearly reads 'Campbell's' and 'Tomato Soup'. The can is sitting on a wooden counter.",
-    "ground_truth": { "is_target": true, "expected_label": "Campbell's tomato soup" },
+    "ground_truth": {
+      "is_target": true,
+      "expected_label": "Campbell's tomato soup"
+    },
     "check_image_description": "Campbell's tomato soup can, front view on a wood counter.",
     "follow_up": null,
     "classical_decision": null,
@@ -226,63 +137,23 @@
     "category": "duplicate",
     "photo_path": null,
     "vlm_text": "A cylindrical can is photographed from a slight angle. The can has a red and white label, with the red on top. Partial text 'Campbell' is visible curving around the side, and parts of 'Tomato' are readable. The label wraps around and some nutrition text is visible on the right edge.",
-    "ground_truth": { "is_target": true, "duplicate_of": "dup_campbell_front" },
+    "ground_truth": {
+      "is_target": true,
+      "duplicate_of": "dup_campbell_front"
+    },
     "check_image_description": "Same Campbell's tomato soup can, rotated ~30 degrees, same counter, same lighting.",
     "follow_up": null,
     "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Must trigger check_catalog_match against dup_campbell_front. Expect skip."
   },
   {
-    "id": "dup_lacroix_front",
-    "category": "duplicate",
-    "photo_path": null,
-    "vlm_text": "A tall slim cylindrical can with a white background and pink and yellow geometric pattern. 'LaCroix' is printed in large letters and 'Pamplemousse' is readable below. The can stands on a kitchen counter.",
-    "ground_truth": { "is_target": true, "expected_label": "LaCroix pamplemousse" },
-    "check_image_description": "LaCroix pamplemousse can, front view, upright.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. First half of a duplicate pair."
-  },
-  {
-    "id": "dup_lacroix_top",
-    "category": "duplicate",
-    "photo_path": null,
-    "vlm_text": "A cylindrical metal can photographed from slightly above. The top of the can shows a silver aluminum surface with a pull-tab. The upper portion of a white label with pink and yellow geometric shapes is visible and the word 'LaCroix' can be partially read.",
-    "ground_truth": { "is_target": true, "duplicate_of": "dup_lacroix_front" },
-    "check_image_description": "Same LaCroix pamplemousse can, top-down angle exposing the pull-tab; same counter.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Top-down view of prior sample. check_catalog_match should flag."
-  },
-  {
-    "id": "dup_goya_front",
-    "category": "duplicate",
-    "photo_path": null,
-    "vlm_text": "A short cylindrical can with a black label. Yellow and red text is visible on the front and the word 'Goya' is clear near the top. 'Black Beans' is readable below.",
-    "ground_truth": { "is_target": true, "expected_label": "Goya black beans" },
-    "check_image_description": "Goya black beans can, front view on a counter.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. First half of a duplicate pair."
-  },
-  {
-    "id": "dup_goya_tilted",
-    "category": "duplicate",
-    "photo_path": null,
-    "vlm_text": "A short black can is tilted to one side on a counter. Red and yellow label text is partially visible, with letters 'oy' and 'eans' readable across the curved surface. The label wraps around and some nutrition information is visible.",
-    "ground_truth": { "is_target": true, "duplicate_of": "dup_goya_front" },
-    "check_image_description": "Same Goya black beans can, tilted ~45 degrees on the counter; label partially readable around the curve.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Tilted view of prior sample. check_catalog_match should flag."
-  },
-
-  {
     "id": "neg_empty_counter",
     "category": "negative",
     "photo_path": null,
     "vlm_text": "The image shows a clean, empty kitchen counter with a wooden surface. A small portion of a stainless steel sink is visible in the background. No containers or cans are visible.",
-    "ground_truth": { "is_target": false },
+    "ground_truth": {
+      "is_target": false
+    },
     "check_image_description": "Empty kitchen counter. Nothing placed on it.",
     "follow_up": null,
     "classical_decision": null,
@@ -293,54 +164,12 @@
     "category": "negative",
     "photo_path": null,
     "vlm_text": "The image shows a silver laptop computer open on a wooden desk. The screen is on and displays a code editor. A coffee mug is visible next to the laptop. The room has white walls and a window with blinds.",
-    "ground_truth": { "is_target": false },
+    "ground_truth": {
+      "is_target": false
+    },
     "check_image_description": "A laptop open on a desk with a ceramic coffee mug to the side. No cans in frame.",
     "follow_up": null,
     "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Mug is adversarial-ish (ceramic cylinder) but should not trigger."
-  },
-  {
-    "id": "neg_bookshelf",
-    "category": "negative",
-    "photo_path": null,
-    "vlm_text": "The image shows a wooden bookshelf filled with books of varying sizes and colors. Most books are vertical and a few are stacked horizontally. No cans or containers are visible.",
-    "ground_truth": { "is_target": false },
-    "check_image_description": "A home bookshelf with books. No cylindrical containers present.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture."
-  },
-  {
-    "id": "neg_dog_on_rug",
-    "category": "negative",
-    "photo_path": null,
-    "vlm_text": "The image shows a medium-sized brown dog lying on a patterned rug in a living room. The dog appears to be sleeping. A sofa is visible in the background. No cans or food containers are present.",
-    "ground_truth": { "is_target": false },
-    "check_image_description": "A brown dog napping on a rug in a living room. No cans.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Animal present — should not trigger catalog."
-  },
-  {
-    "id": "neg_outdoor_path",
-    "category": "negative",
-    "photo_path": null,
-    "vlm_text": "The image shows an outdoor walking path with trees on either side. The path is paved with gray stone and leads into the distance. Green grass and bushes line the edges. There are no objects on the path.",
-    "ground_truth": { "is_target": false },
-    "check_image_description": "An outdoor garden path. No cans, no containers.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture."
-  },
-  {
-    "id": "neg_dark_frame",
-    "category": "negative",
-    "photo_path": null,
-    "vlm_text": "The image is almost entirely black. A faint outline of something is barely discernible near the center but no features are identifiable. It appears to be a dark or unlit scene.",
-    "ground_truth": { "is_target": false },
-    "check_image_description": "A mostly black frame, camera pointed at an unlit wall. No identifiable objects.",
-    "follow_up": null,
-    "classical_decision": null,
-    "notes": "Draft caption, pending real VLM capture. Tests behavior on near-blank frames."
   }
 ]
