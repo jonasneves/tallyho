@@ -7,6 +7,7 @@
     "ground_truth": { "is_target": true, "expected_label": "Campbell's tomato soup" },
     "check_image_description": "A red and white Campbell's condensed tomato soup can, label clearly legible, front view on a wood table.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Classic clear-can reference."
   },
   {
@@ -17,6 +18,7 @@
     "ground_truth": { "is_target": true, "expected_label": "Goya black beans" },
     "check_image_description": "A Goya black beans can, black label with yellow and red accents, label facing camera.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Black label for HSV diversity."
   },
   {
@@ -27,6 +29,7 @@
     "ground_truth": { "is_target": true, "expected_label": "Del Monte whole kernel corn" },
     "check_image_description": "A Del Monte whole kernel corn can, green label with a photo of corn, label facing camera.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Green label, also tests corn-not-candle."
   },
   {
@@ -37,6 +40,7 @@
     "ground_truth": { "is_target": true, "expected_label": "LaCroix pamplemousse" },
     "check_image_description": "A LaCroix pamplemousse (grapefruit) sparkling water can, white with pink and yellow pattern, upright on counter.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Beverage can, slim profile."
   },
   {
@@ -47,6 +51,7 @@
     "ground_truth": { "is_target": true, "expected_label": "Bush's baked beans" },
     "check_image_description": "A Bush's Best baked beans can with the signature yellow and brown label, label facing camera.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Yellow label — important HSV overlap with the candle."
   },
   {
@@ -57,6 +62,7 @@
     "ground_truth": { "is_target": true, "expected_label": "Progresso chicken noodle soup" },
     "check_image_description": "A Progresso chicken noodle soup can, silver body with blue and red accents, label legible.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Silver/metallic — different HSV profile."
   },
 
@@ -68,6 +74,17 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "A cylindrical scented candle wrapped in a yellow label that reads 'CAN OF CORN' in large black letters. The top of the candle shows wax and a wick, not a pull-tab or metal rim. Held by a person in a black cap and glasses.",
     "follow_up": null,
+    "classical_decision": {
+      "detected": true,
+      "label": "CAN OF CORN",
+      "confidence": 0.59,
+      "reasons": [
+        "hsv: yellow ~0.9",
+        "shape: cylinder ~0.8",
+        "ocr: CAN OF CORN ~82"
+      ],
+      "_note": "Pre-filled per design statement, not a real run. The classical arm is built to false-positive here; see classical.README.md 'Known failure modes'. Replace with a real analyzeFrame() output once a real photo is captured."
+    },
     "notes": "Real live-smoke-test caption, 2026-04-22. The hero adversarial sample. Jonas held up a Trader Joe's Corn Scented Candle; Claude correctly refused with reasoning about scented candle vs food. Ground truth: NOT a can."
   },
   {
@@ -78,6 +95,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "A Quaker Oats cardboard canister, cylindrical, blue and red label. Not a metal can — walls are visibly cardboard and the top is a plastic lid, not a metal rim.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Cardboard cylinder, same shape but wrong material."
   },
   {
@@ -88,6 +106,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "A 20oz plastic Coca-Cola bottle. Narrow threaded neck with a black screw cap, visibly a bottle, not a can.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Bottle, not can — tests shape discrimination."
   },
   {
@@ -98,6 +117,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "A reusable Hydro Flask style insulated metal water bottle, matte blue, threaded lid, Hydro Flask logo near the base. Not a food can.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Metal cylinder without food packaging — adversarial for classical arm."
   },
   {
@@ -108,6 +128,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "A stainless steel travel thermos with a black twist-lid. Double-walled, tapered shape, no food packaging.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Silver cylinder, confuses HSV."
   },
   {
@@ -118,6 +139,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "A 2-inch PVC pipe segment, roughly 4 inches long, white plastic, completely unlabeled. Not a can.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Pure-shape adversarial — cylindrical but clearly not food."
   },
 
@@ -129,6 +151,7 @@
     "ground_truth": { "is_target": true, "expected_label": "unknown red and white can" },
     "check_image_description": "A hand gripping a can, most of the body occluded. Visible: a silver top rim and a sliver of red/white label near the top; brand text not legible.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Tests capture-with-partial-info."
   },
   {
@@ -139,6 +162,7 @@
     "ground_truth": { "is_target": true, "expected_label": "unknown green-labeled can" },
     "check_image_description": "Top third of a green-labeled can peeking above the front lip of a pantry shelf; brand not readable from this angle.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Label mostly below the shelf edge."
   },
   {
@@ -149,6 +173,7 @@
     "ground_truth": { "is_target": true, "expected_label": "unknown can, label rotated away" },
     "check_image_description": "A can shown from the back. Only the nutrition facts panel is visible; the branded face is turned 180 degrees from the camera.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Triggers guide_operator('rotate 90°') in healthy runs."
   },
   {
@@ -159,6 +184,7 @@
     "ground_truth": { "is_target": true, "expected_label": "unknown blue-ish can under glare" },
     "check_image_description": "A can under a ceiling light with a hot glare band across its front; the label underneath appears blue but text is unreadable.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Tests glare-mitigation path."
   },
   {
@@ -169,6 +195,7 @@
     "ground_truth": { "is_target": true, "expected_label": "unknown can in low light" },
     "check_image_description": "A can on a kitchen counter in evening light; silhouette clear, label text unreadable due to low illumination.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Low-light perception robustness."
   },
   {
@@ -179,6 +206,7 @@
     "ground_truth": { "is_target": true, "expected_label": "Campbell's soup (shadow-partial)" },
     "check_image_description": "A Campbell's soup can with a diagonal shadow; part of the brand name is legible on the lit half.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Partial OCR, should still resolve to Campbell's."
   },
 
@@ -190,6 +218,7 @@
     "ground_truth": { "is_target": true, "expected_label": "Campbell's tomato soup" },
     "check_image_description": "Campbell's tomato soup can, front view on a wood counter.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. First half of a duplicate pair."
   },
   {
@@ -200,6 +229,7 @@
     "ground_truth": { "is_target": true, "duplicate_of": "dup_campbell_front" },
     "check_image_description": "Same Campbell's tomato soup can, rotated ~30 degrees, same counter, same lighting.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Must trigger check_catalog_match against dup_campbell_front. Expect skip."
   },
   {
@@ -210,6 +240,7 @@
     "ground_truth": { "is_target": true, "expected_label": "LaCroix pamplemousse" },
     "check_image_description": "LaCroix pamplemousse can, front view, upright.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. First half of a duplicate pair."
   },
   {
@@ -220,6 +251,7 @@
     "ground_truth": { "is_target": true, "duplicate_of": "dup_lacroix_front" },
     "check_image_description": "Same LaCroix pamplemousse can, top-down angle exposing the pull-tab; same counter.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Top-down view of prior sample. check_catalog_match should flag."
   },
   {
@@ -230,6 +262,7 @@
     "ground_truth": { "is_target": true, "expected_label": "Goya black beans" },
     "check_image_description": "Goya black beans can, front view on a counter.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. First half of a duplicate pair."
   },
   {
@@ -240,6 +273,7 @@
     "ground_truth": { "is_target": true, "duplicate_of": "dup_goya_front" },
     "check_image_description": "Same Goya black beans can, tilted ~45 degrees on the counter; label partially readable around the curve.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Tilted view of prior sample. check_catalog_match should flag."
   },
 
@@ -251,6 +285,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "Empty kitchen counter. Nothing placed on it.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture."
   },
   {
@@ -261,6 +296,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "A laptop open on a desk with a ceramic coffee mug to the side. No cans in frame.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Mug is adversarial-ish (ceramic cylinder) but should not trigger."
   },
   {
@@ -271,6 +307,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "A home bookshelf with books. No cylindrical containers present.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture."
   },
   {
@@ -281,6 +318,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "A brown dog napping on a rug in a living room. No cans.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Animal present — should not trigger catalog."
   },
   {
@@ -291,6 +329,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "An outdoor garden path. No cans, no containers.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture."
   },
   {
@@ -301,6 +340,7 @@
     "ground_truth": { "is_target": false },
     "check_image_description": "A mostly black frame, camera pointed at an unlit wall. No identifiable objects.",
     "follow_up": null,
+    "classical_decision": null,
     "notes": "Draft caption, pending real VLM capture. Tests behavior on near-blank frames."
   }
 ]

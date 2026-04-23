@@ -112,7 +112,7 @@ make eval
 
 ### Results
 
-Numbers populate when the evaluation harness runs against the can dataset. See `results/eval/scores.json` for the current run, and `data/eval/README.md` for the dataset schema.
+`scores.json` carries a separate block for each version (`dl` and `classical`) so the two arms are reported side-by-side under the same rubric. DL numbers populate from `node src/eval.js` (Claude in the loop, mocked tools). Classical numbers populate per-sample as `classical_decision` fields land in `data/eval/samples.json`; each one is the output of a browser-side `analyzeFrame()` run pasted in by hand (the library is browser-only — see `data/eval/README.md` for the workflow). Until real photos and `classical_decision` blocks land, the classical column is dashes and `samples_evaluated` reports `0/30`. See `results/eval/scores.json` for the current run.
 
 | Metric | DL version | Classical version |
 |---|---|---|
@@ -121,6 +121,7 @@ Numbers populate when the evaluation harness runs against the can dataset. See `
 | False positive rate | — | — |
 | Avg tokens per entry | — | n/a |
 | Avg latency per entry | — | — |
+| Samples evaluated | — | 0 / 30 |
 
 **Known limitation**: when the VLM misidentifies a can as another object (e.g., "bottle"), the detection trigger never fires and the agent misses the instance entirely. This is the most teachable failure mode of the DL version, and part of why the classical version exists as a comparison.
 
