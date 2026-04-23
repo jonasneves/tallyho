@@ -78,4 +78,4 @@ Runs the full pipeline headless against a single image and prints the decision. 
 
 ## Integration status
 
-Not wired into the running app or the eval harness yet. This slice is the library only. The eval hookup and UI toggle come next.
+Wired in two places: the live UI's pipeline toggle (`app.js`, snap-and-analyze) and the eval harness (`src/eval.js` reads a stored `classical_decision` per sample).
