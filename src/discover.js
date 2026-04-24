@@ -24,8 +24,9 @@
 //   lobby.onChange(ads => ...);  // unsigned + invalid-sig ads are dropped
 // Consumers build trust on top: the verified _pubkey is the "is this the
 // device I paired before" continuity primitive. peer-key.js manages the
-// device key. See better-robotics/public/phone.js for an integration that
-// pairs trust via QR (the QR encodes the publisher's pubkey).
+// device key. Consumers bind trust via an out-of-band channel:
+// a QR scan (encoding the publisher pubkey) or an explicit
+// accept/deny prompt carrying the user real-time consent.
 
 import { getMyPubkeyB64, signBytes, verifyBytes, canonical } from './peer-key.js';
 
