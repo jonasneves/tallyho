@@ -4,7 +4,9 @@ import { initPeer, connectToPeer, closePeer, getDataConn, sendData, getConnectio
 import { analyzeFrame as classicalAnalyzeFrame, preload as classicalPreload, isLoaded as classicalIsLoaded } from './src/classical.js';
 import { discover } from './src/discover.js';
 import { getMyPubkeyB64 } from './src/peer-key.js';
-import { trust as trustDevice, isAutoAccept } from './src/trust.js';
+import { makeTrustStore } from './src/trust.js';
+import { pairRequestClient } from './src/pair-request.js';
+var _trust = makeTrustStore('tallyho:trust:v1');
 
 window.flashBtn = function (btn, label) {
   if (!btn) return;
@@ -466,9 +468,6 @@ async function boot() {
 
 var _lobby = null;
 var _myPubkey = null;
-var _handledRequestNonces = new Set();
-var _pendingRequestNonce = null;
-var _pendingRequestTimer = null;
 
 function getLobby() {
   if (!_lobby) _lobby = discover({ sign: true });
@@ -498,11 +497,36 @@ async function publishDesktopAd() {
   }, 60000);
 }
 
+// Desktop subscribes for phone presence (passive badge) AND for
+// pair-requests targeting our pubkey. The pair-request library owns
+// nonce-dedup, filter, response, timeout; this file supplies the
+// match rule, the trust lookup, and the UI.
+var _pairClient = null;
+function _getPairClient() {
+  if (!_pairClient) _pairClient = pairRequestClient({ app: 'tallyho-pair', sign: true, lobby: getLobby() });
+  return _pairClient;
+}
 async function initDesktopPresenceWatcher() {
   await _ensureMyPubkey();
   getLobby().onChange(function (ads) {
     _renderPhonePresence(ads);
-    _processIncomingRequests(ads);
+  });
+  _getPairClient().onRequest(async function (req) {
+    var senderPubkey = req.senderPubkey;
+    var senderLabel = req.payload.label || 'Phone';
+    if (!senderPubkey) return;
+    if (_trust.isAutoAccept(senderPubkey)) {
+      console.log('[tallyho] auto-accepting trusted phone:', senderLabel);
+      await req.accept({ peerId: myId });
+      return;
+    }
+    var decision = await _showRequestPrompt(senderLabel);
+    if (!decision) { await req.deny(); return; }
+    if (decision.trust) _trust.trust(senderPubkey, senderLabel);
+    if (decision.accepted) await req.accept({ peerId: myId });
+    else await req.deny();
+  }, {
+    match: function (ad) { return ad.data.target === _myPubkey; },
   });
 }
 
@@ -517,46 +541,6 @@ function _renderPhonePresence(ads) {
   badge.textContent = phones.length === 1
     ? (phones[0].data.label || 'Phone') + ' on wifi'
     : phones.length + ' phones on wifi';
-}
-
-function _processIncomingRequests(ads) {
-  if (!_myPubkey) return;
-  var requests = ads.filter(function (ad) {
-    return ad.data
-      && ad.data.app === 'tallyho-pair-request'
-      && ad.data.target === _myPubkey
-      && ad.data.nonce
-      && !_handledRequestNonces.has(ad.data.nonce);
-  });
-  requests.forEach(function (req) {
-    _handledRequestNonces.add(req.data.nonce);
-    _handlePairRequest(req);
-  });
-}
-
-async function _handlePairRequest(req) {
-  var senderPubkey = req.data._pubkey;
-  var senderLabel = req.data.label || 'Phone';
-  var nonce = req.data.nonce;
-  if (!senderPubkey) return;
-  if (isAutoAccept(senderPubkey)) {
-    console.log('[tallyho] auto-accepting trusted phone:', senderLabel);
-    _publishResponse(true, senderPubkey, nonce);
-    return;
-  }
-  var decision = await _showRequestPrompt(senderLabel);
-  if (decision && decision.trust) trustDevice(senderPubkey, senderLabel);
-  _publishResponse(!!(decision && decision.accepted), senderPubkey, nonce);
-}
-
-function _publishResponse(accepted, targetPubkey, nonce) {
-  getLobby().publish('tallyho-pair-response:' + nonce, {
-    app: 'tallyho-pair-response',
-    target: targetPubkey,
-    nonce: nonce,
-    accepted: accepted,
-    peerId: accepted ? myId : null
-  }, 30000);
 }
 
 var _promptResolver = null;
@@ -597,8 +581,6 @@ async function initMobileNearbyDiscovery() {
   }, 60000);
 
   getLobby().onChange(function (ads) {
-    _processPairResponses(ads);
-
     var desktops = ads.filter(function (ad) {
       return ad.data && ad.data.app === 'tallyho-desktop'
         && ad.data._pubkey && ad.data.peerId;
@@ -640,49 +622,26 @@ function _setNearbyStatus(text, kind) {
   status.className = 'nearby-status' + (kind ? ' ' + kind : '');
 }
 
-function _requestPair(desktopAd) {
+async function _requestPair(desktopAd) {
   var targetPubkey = desktopAd.data._pubkey;
   var label = desktopAd.data.label || 'Computer';
-  var nonce = (crypto.randomUUID && crypto.randomUUID()) || Math.random().toString(36).slice(2);
-  _pendingRequestNonce = nonce;
   _setNearbyStatus('Asking ' + label + ' to pair…');
-  getLobby().publish('tallyho-pair-request:' + nonce, {
-    app: 'tallyho-pair-request',
-    target: targetPubkey,
-    nonce: nonce,
-    label: deviceLabel()
-  }, 30000);
-  if (_pendingRequestTimer) clearTimeout(_pendingRequestTimer);
-  _pendingRequestTimer = setTimeout(function () {
-    if (_pendingRequestNonce !== nonce) return;
-    _pendingRequestNonce = null;
-    _setNearbyStatus('No response from ' + label + '. Try again.', 'alert');
-    try { _lobby.remove('tallyho-pair-request:' + nonce); } catch (_) {}
-  }, 30000);
-}
-
-function _processPairResponses(ads) {
-  if (!_pendingRequestNonce || !_myPubkey) return;
-  var resp = ads.find(function (a) {
-    return a.data
-      && a.data.app === 'tallyho-pair-response'
-      && a.data.target === _myPubkey
-      && a.data.nonce === _pendingRequestNonce;
+  var result = await _getPairClient().request({
+    payload: { target: targetPubkey, label: deviceLabel() },
   });
-  if (!resp) return;
-  var nonce = _pendingRequestNonce;
-  _pendingRequestNonce = null;
-  if (_pendingRequestTimer) { clearTimeout(_pendingRequestTimer); _pendingRequestTimer = null; }
-  try { _lobby.remove('tallyho-pair-request:' + nonce); } catch (_) {}
-
-  if (resp.data.accepted && resp.data.peerId) {
-    if (resp.data._pubkey) trustDevice(resp.data._pubkey, 'Computer');
-    _setNearbyStatus('Accepted — connecting…');
-    connectFromNearby(resp.data.peerId);
-  } else {
-    _setNearbyStatus('Pair declined.', 'alert');
+  if (result.timedOut) {
+    _setNearbyStatus('No response from ' + label + '. Try again.', 'alert');
+    return;
   }
+  if (result.accepted && result.data && result.data.peerId) {
+    if (targetPubkey) _trust.trust(targetPubkey, label);
+    _setNearbyStatus('Accepted — connecting…');
+    connectFromNearby(result.data.peerId);
+    return;
+  }
+  _setNearbyStatus('Pair declined.', 'alert');
 }
+
 
 function toggleOtherWaysToConnect() {
   var connect = document.getElementById('mobile-connect');
