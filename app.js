@@ -527,6 +527,7 @@ async function initDesktopPresenceWatcher() {
     else await req.deny();
   }, {
     match: function (ad) { return ad.data.target === _myPubkey; },
+    onError: function (err) { console.warn('[tallyho] pair-request handler:', err && err.message || err); },
   });
 }
 
@@ -634,7 +635,8 @@ async function _requestPair(desktopAd) {
     return;
   }
   if (result.accepted && result.data && result.data.peerId) {
-    if (targetPubkey) _trust.trust(targetPubkey, label);
+    // Desktop trusts us per its own "Trust this phone" decision; we
+    // don't auto-trust back without a phone-side checkbox UI to match.
     _setNearbyStatus('Accepted — connecting…');
     connectFromNearby(result.data.peerId);
     return;
