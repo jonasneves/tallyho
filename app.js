@@ -2,6 +2,7 @@ import { runAgent, stopAgent, buildSystemPrompt, getModelName } from './src/agen
 import { VLM_DEFAULT_PROMPT, TARGET_CATEGORY } from './src/tools.js';
 import { initPeer, connectToPeer, closePeer, getDataConn, sendData, getConnectionInfo } from './src/peer.js';
 import { analyzeFrame as classicalAnalyzeFrame, preload as classicalPreload, isLoaded as classicalIsLoaded } from './src/classical.js';
+import { discover } from './src/discover.js';
 
 window.flashBtn = function (btn, label) {
   if (!btn) return;
@@ -445,9 +446,74 @@ async function boot() {
     remotePeerIdToConnect = params.get('peer').trim();
     await startApp();
     setStatus('', 'Connecting to desktop...');
-  } else if (!hasWebGPU) {
+  } else if (hasWebGPU) {
+    publishDesktopAd();
+  } else {
     startMobileScanner();
+    initMobileNearbyDiscovery();
   }
+}
+
+// ── LAN discovery (signal /discover) ───────────────────────────
+
+var _lobby = null;
+
+function getLobby() {
+  if (!_lobby) _lobby = discover();
+  return _lobby;
+}
+
+function deviceLabel() {
+  var ua = navigator.userAgent || '';
+  if (/Mac|iPhone|iPad|iPod/i.test(ua)) return /iPhone|iPad|iPod/i.test(ua) ? 'iPhone' : 'Mac';
+  if (/Android/i.test(ua)) return 'Android';
+  if (/Windows/i.test(ua)) return 'Windows';
+  if (/Linux/i.test(ua)) return 'Linux';
+  return 'Computer';
+}
+
+function publishDesktopAd() {
+  getLobby().publish('tallyho:' + myId, {
+    app: 'tallyho',
+    peerId: myId,
+    label: deviceLabel()
+  }, 60000);
+}
+
+function initMobileNearbyDiscovery() {
+  var wrap = document.getElementById('nearby-desktops');
+  var list = document.getElementById('nearby-list');
+  if (!wrap || !list) return;
+
+  getLobby().onChange(function (ads) {
+    var desktops = ads.filter(function (ad) {
+      return ad.data && ad.data.app === 'tallyho'
+        && ad.data.peerId && ad.data.peerId !== myId;
+    });
+    if (!desktops.length) {
+      wrap.hidden = true;
+      list.innerHTML = '';
+      return;
+    }
+    wrap.hidden = false;
+    list.innerHTML = '';
+    desktops.forEach(function (ad) {
+      var btn = document.createElement('button');
+      btn.className = 'btn btn-primary';
+      btn.textContent = 'Connect to ' + (ad.data.label || 'Computer');
+      btn.addEventListener('click', function () { connectFromNearby(ad.data.peerId); });
+      list.appendChild(btn);
+    });
+  });
+}
+
+function connectFromNearby(peerId) {
+  if (!peerId || peerId === myId) return;
+  remotePeerIdToConnect = peerId;
+  stopScanner();
+  syncUrlForPeer(peerId);
+  connectToPeer(peerId, peerCtx);
+  startApp();
 }
 
 // Peer context: bridges src/peer.js with app state and UI

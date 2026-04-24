@@ -71,6 +71,13 @@
 
       <!-- Mobile: primary action is scan to connect -->
       <div class="mobile-only mobile-connect">
+        <!-- Auto-discovered desktops on the same wifi (signal /discover).
+             Hidden when the lobby is empty so the QR scanner stays primary. -->
+        <div class="nearby-desktops" id="nearby-desktops" hidden>
+          <p class="nearby-label">On your wifi</p>
+          <div class="nearby-list" id="nearby-list"></div>
+          <p class="nearby-or">or scan the QR</p>
+        </div>
         <div class="video-wrap" id="scanner-wrap-mobile" role="img" aria-label="QR code scanner viewfinder">
           <video id="scanner-video-mobile" autoplay playsinline muted aria-hidden="true"></video>
           <canvas id="scanner-canvas-mobile" style="display:none"></canvas>
