@@ -538,6 +538,52 @@ body.live .session-telemetry { display: inline-flex; }
   padding: 12px 14px;
   font-weight: 500;
 }
+.nearby-status {
+  margin: 6px 2px 0;
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.nearby-status.alert { color: var(--red, #c0392b); }
+
+/* Pair-request modal — AirDrop-shape buttons. */
+.pair-request-dialog {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface, #fff);
+  color: var(--text);
+  padding: 20px;
+  max-width: min(420px, 92vw);
+}
+.pair-request-dialog::backdrop { background: rgba(0,0,0,0.4); }
+.pair-request-title {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 0 8px;
+  color: var(--text);
+}
+.pair-request-text { margin: 0 0 14px; font-size: 14px; line-height: 1.4; }
+.pair-request-trust-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.pair-request-trust-row input { width: 18px; height: 18px; }
+.pair-request-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.pair-request-actions .btn { width: auto; min-width: 100px; padding: 10px 18px; }
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
 .connect-other-toggle {
   align-self: center;
   margin-top: 6px;

@@ -3,6 +3,8 @@ import { VLM_DEFAULT_PROMPT, TARGET_CATEGORY } from './src/tools.js';
 import { initPeer, connectToPeer, closePeer, getDataConn, sendData, getConnectionInfo } from './src/peer.js';
 import { analyzeFrame as classicalAnalyzeFrame, preload as classicalPreload, isLoaded as classicalIsLoaded } from './src/classical.js';
 import { discover } from './src/discover.js';
+import { getMyPubkeyB64 } from './src/peer-key.js';
+import { trust as trustDevice, isAutoAccept } from './src/trust.js';
 
 window.flashBtn = function (btn, label) {
   if (!btn) return;
@@ -455,12 +457,21 @@ async function boot() {
   }
 }
 
-// ── LAN discovery (signal /discover) ───────────────────────────
+// ── LAN discovery + request/accept (signal /discover) ─────────────
+//
+// Phone discovers desktops on the wifi, taps one, sends a signed
+// pair-request. Desktop sees the request, prompts the user (or
+// auto-accepts if trusted), publishes a pair-response with its
+// peerId. Phone connects to th-<peerId>. AirDrop-shape.
 
 var _lobby = null;
+var _myPubkey = null;
+var _handledRequestNonces = new Set();
+var _pendingRequestNonce = null;
+var _pendingRequestTimer = null;
 
 function getLobby() {
-  if (!_lobby) _lobby = discover();
+  if (!_lobby) _lobby = discover({ sign: true });
   return _lobby;
 }
 
@@ -473,45 +484,124 @@ function deviceLabel() {
   return 'Computer';
 }
 
-function publishDesktopAd() {
-  getLobby().publish('tallyho:' + myId, {
-    app: 'tallyho',
+async function _ensureMyPubkey() {
+  if (!_myPubkey) _myPubkey = await getMyPubkeyB64();
+  return _myPubkey;
+}
+
+async function publishDesktopAd() {
+  await _ensureMyPubkey();
+  getLobby().publish('tallyho-desktop:' + _myPubkey, {
+    app: 'tallyho-desktop',
     peerId: myId,
     label: deviceLabel()
   }, 60000);
 }
 
-function initDesktopPresenceWatcher() {
-  var badge = document.getElementById('phone-presence');
-  if (!badge) return;
+async function initDesktopPresenceWatcher() {
+  await _ensureMyPubkey();
   getLobby().onChange(function (ads) {
-    var phones = ads.filter(function (ad) {
-      return ad.data && ad.data.app === 'tallyho-phone-ready';
-    });
-    if (!phones.length) { badge.hidden = true; return; }
-    badge.hidden = false;
-    badge.textContent = phones.length === 1
-      ? (phones[0].data.label || 'Phone') + ' on wifi'
-      : phones.length + ' phones on wifi';
+    _renderPhonePresence(ads);
+    _processIncomingRequests(ads);
   });
 }
 
-function initMobileNearbyDiscovery() {
+function _renderPhonePresence(ads) {
+  var badge = document.getElementById('phone-presence');
+  if (!badge) return;
+  var phones = ads.filter(function (ad) {
+    return ad.data && ad.data.app === 'tallyho-phone';
+  });
+  if (!phones.length) { badge.hidden = true; return; }
+  badge.hidden = false;
+  badge.textContent = phones.length === 1
+    ? (phones[0].data.label || 'Phone') + ' on wifi'
+    : phones.length + ' phones on wifi';
+}
+
+function _processIncomingRequests(ads) {
+  if (!_myPubkey) return;
+  var requests = ads.filter(function (ad) {
+    return ad.data
+      && ad.data.app === 'tallyho-pair-request'
+      && ad.data.target === _myPubkey
+      && ad.data.nonce
+      && !_handledRequestNonces.has(ad.data.nonce);
+  });
+  requests.forEach(function (req) {
+    _handledRequestNonces.add(req.data.nonce);
+    _handlePairRequest(req);
+  });
+}
+
+async function _handlePairRequest(req) {
+  var senderPubkey = req.data._pubkey;
+  var senderLabel = req.data.label || 'Phone';
+  var nonce = req.data.nonce;
+  if (!senderPubkey) return;
+  if (isAutoAccept(senderPubkey)) {
+    console.log('[tallyho] auto-accepting trusted phone:', senderLabel);
+    _publishResponse(true, senderPubkey, nonce);
+    return;
+  }
+  var decision = await _showRequestPrompt(senderLabel);
+  if (decision && decision.trust) trustDevice(senderPubkey, senderLabel);
+  _publishResponse(!!(decision && decision.accepted), senderPubkey, nonce);
+}
+
+function _publishResponse(accepted, targetPubkey, nonce) {
+  getLobby().publish('tallyho-pair-response:' + nonce, {
+    app: 'tallyho-pair-response',
+    target: targetPubkey,
+    nonce: nonce,
+    accepted: accepted,
+    peerId: accepted ? myId : null
+  }, 30000);
+}
+
+var _promptResolver = null;
+function _showRequestPrompt(label) {
+  return new Promise(function (resolve) {
+    var dialog = document.getElementById('pair-request-dialog');
+    if (!dialog) { resolve(null); return; }
+    document.getElementById('pair-request-label').textContent = label;
+    var trustCb = document.getElementById('pair-request-trust');
+    if (trustCb) trustCb.checked = false;
+    _promptResolver = resolve;
+    dialog.showModal();
+    setTimeout(function () { if (_promptResolver) _resolveRequestPrompt(false); }, 30000);
+  });
+}
+function _resolveRequestPrompt(accepted) {
+  if (!_promptResolver) return;
+  var trust = !!document.getElementById('pair-request-trust').checked;
+  var r = _promptResolver;
+  _promptResolver = null;
+  document.getElementById('pair-request-dialog').close();
+  r({ accepted: accepted, trust: trust });
+}
+window._tallyhoAcceptRequest = function () { _resolveRequestPrompt(true); };
+window._tallyhoDenyRequest = function () { _resolveRequestPrompt(false); };
+
+async function initMobileNearbyDiscovery() {
   var wrap = document.getElementById('nearby-desktops');
   var list = document.getElementById('nearby-list');
   var connect = document.getElementById('mobile-connect');
   if (!wrap || !list) return;
 
-  // Mobile in lobby publishes phone-ready so desktop can show presence.
-  getLobby().publish('tallyho-phone-ready:' + myId, {
-    app: 'tallyho-phone-ready',
+  await _ensureMyPubkey();
+
+  getLobby().publish('tallyho-phone:' + _myPubkey, {
+    app: 'tallyho-phone',
     label: deviceLabel()
   }, 60000);
 
   getLobby().onChange(function (ads) {
+    _processPairResponses(ads);
+
     var desktops = ads.filter(function (ad) {
-      return ad.data && ad.data.app === 'tallyho'
-        && ad.data.peerId && ad.data.peerId !== myId;
+      return ad.data && ad.data.app === 'tallyho-desktop'
+        && ad.data._pubkey && ad.data.peerId;
     });
     if (!desktops.length) {
       wrap.hidden = true;
@@ -524,8 +614,8 @@ function initMobileNearbyDiscovery() {
     desktops.forEach(function (ad) {
       var btn = document.createElement('button');
       btn.className = 'btn btn-primary';
-      btn.textContent = 'Connect to ' + (ad.data.label || 'Computer');
-      btn.addEventListener('click', function () { connectFromNearby(ad.data.peerId); });
+      btn.textContent = 'Pair with ' + (ad.data.label || 'Computer');
+      btn.addEventListener('click', function () { _requestPair(ad); });
       list.appendChild(btn);
     });
     if (connect && !connect.classList.contains('has-nearby')) {
@@ -533,6 +623,65 @@ function initMobileNearbyDiscovery() {
       stopScanner();
     }
   });
+}
+
+function _setNearbyStatus(text, kind) {
+  var wrap = document.getElementById('nearby-desktops');
+  var status = document.getElementById('nearby-status');
+  if (!status) {
+    status = document.createElement('p');
+    status.id = 'nearby-status';
+    status.className = 'nearby-status';
+    if (wrap) wrap.appendChild(status);
+  }
+  if (!text) { status.hidden = true; status.textContent = ''; status.className = 'nearby-status'; return; }
+  status.hidden = false;
+  status.textContent = text;
+  status.className = 'nearby-status' + (kind ? ' ' + kind : '');
+}
+
+function _requestPair(desktopAd) {
+  var targetPubkey = desktopAd.data._pubkey;
+  var label = desktopAd.data.label || 'Computer';
+  var nonce = (crypto.randomUUID && crypto.randomUUID()) || Math.random().toString(36).slice(2);
+  _pendingRequestNonce = nonce;
+  _setNearbyStatus('Asking ' + label + ' to pair…');
+  getLobby().publish('tallyho-pair-request:' + nonce, {
+    app: 'tallyho-pair-request',
+    target: targetPubkey,
+    nonce: nonce,
+    label: deviceLabel()
+  }, 30000);
+  if (_pendingRequestTimer) clearTimeout(_pendingRequestTimer);
+  _pendingRequestTimer = setTimeout(function () {
+    if (_pendingRequestNonce !== nonce) return;
+    _pendingRequestNonce = null;
+    _setNearbyStatus('No response from ' + label + '. Try again.', 'alert');
+    try { _lobby.remove('tallyho-pair-request:' + nonce); } catch (_) {}
+  }, 30000);
+}
+
+function _processPairResponses(ads) {
+  if (!_pendingRequestNonce || !_myPubkey) return;
+  var resp = ads.find(function (a) {
+    return a.data
+      && a.data.app === 'tallyho-pair-response'
+      && a.data.target === _myPubkey
+      && a.data.nonce === _pendingRequestNonce;
+  });
+  if (!resp) return;
+  var nonce = _pendingRequestNonce;
+  _pendingRequestNonce = null;
+  if (_pendingRequestTimer) { clearTimeout(_pendingRequestTimer); _pendingRequestTimer = null; }
+  try { _lobby.remove('tallyho-pair-request:' + nonce); } catch (_) {}
+
+  if (resp.data.accepted && resp.data.peerId) {
+    if (resp.data._pubkey) trustDevice(resp.data._pubkey, 'Computer');
+    _setNearbyStatus('Accepted — connecting…');
+    connectFromNearby(resp.data.peerId);
+  } else {
+    _setNearbyStatus('Pair declined.', 'alert');
+  }
 }
 
 function toggleOtherWaysToConnect() {
