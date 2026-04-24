@@ -589,7 +589,10 @@ async function initMobileNearbyDiscovery() {
     if (!desktops.length) {
       wrap.hidden = true;
       list.innerHTML = '';
-      if (connect) connect.classList.remove('has-nearby');
+      if (connect) {
+        connect.classList.remove('has-nearby');
+        connect.classList.remove('show-other');
+      }
       return;
     }
     wrap.hidden = false;
