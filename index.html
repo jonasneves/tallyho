@@ -69,29 +69,35 @@
         Start camera
       </button>
 
-      <!-- Mobile: primary action is scan to connect -->
-      <div class="mobile-only mobile-connect">
-        <!-- Auto-discovered desktops on the same wifi (signal /discover).
-             Hidden when the lobby is empty so the QR scanner stays primary. -->
+      <!-- Mobile: primary action is scan to connect.
+           When nearby desktops are detected, has-nearby promotes the
+           discovery list and collapses the QR scanner under a toggle. -->
+      <div class="mobile-only mobile-connect" id="mobile-connect">
         <div class="nearby-desktops" id="nearby-desktops" hidden>
           <p class="nearby-label">On your wifi</p>
           <div class="nearby-list" id="nearby-list"></div>
-          <p class="nearby-or">or scan the QR</p>
         </div>
-        <div class="video-wrap" id="scanner-wrap-mobile" role="img" aria-label="QR code scanner viewfinder">
-          <video id="scanner-video-mobile" autoplay playsinline muted aria-hidden="true"></video>
-          <canvas id="scanner-canvas-mobile" style="display:none"></canvas>
+        <button type="button" class="connect-other-toggle" id="connect-other-toggle" hidden onclick="toggleOtherWaysToConnect()">Other ways to connect</button>
+        <div class="connect-other" id="connect-other">
+          <div class="video-wrap" id="scanner-wrap-mobile" role="img" aria-label="QR code scanner viewfinder">
+            <video id="scanner-video-mobile" autoplay playsinline muted aria-hidden="true"></video>
+            <canvas id="scanner-canvas-mobile" style="display:none"></canvas>
+          </div>
+          <p class="scan-hint">Scan the QR code shown on your computer</p>
+          <div class="field">
+            <label>Or type a peer ID</label>
+            <input id="manual-peer-mobile" placeholder="e.g. abc123" maxlength="8" aria-label="Peer ID" />
+          </div>
+          <button class="btn btn-primary" onclick="connectFromMobile()">Connect</button>
         </div>
-        <p class="scan-hint">Scan the QR code shown on your computer</p>
-        <div class="field">
-          <label>Or type a peer ID</label>
-          <input id="manual-peer-mobile" placeholder="e.g. abc123" maxlength="8" aria-label="Peer ID" />
-        </div>
-        <button class="btn btn-primary" onclick="connectFromMobile()">Connect</button>
       </div>
 
       <div class="phone-connect desktop-only">
-        <span class="phone-connect-label">Pair a phone as a second camera <span class="optional-tag">optional</span></span>
+        <span class="phone-connect-label">
+          Pair a phone as a second camera
+          <span class="optional-tag">optional</span>
+          <span id="phone-presence" class="presence-badge" hidden></span>
+        </span>
         <span class="phone-connect-hint">Scan from your phone to stream its camera wirelessly</span>
         <div class="qr-lobby" id="my-qr"></div>
         <span class="peer-display" id="my-peer-display"></span>

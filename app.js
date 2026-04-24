@@ -448,6 +448,7 @@ async function boot() {
     setStatus('', 'Connecting to desktop...');
   } else if (hasWebGPU) {
     publishDesktopAd();
+    initDesktopPresenceWatcher();
   } else {
     startMobileScanner();
     initMobileNearbyDiscovery();
@@ -480,10 +481,32 @@ function publishDesktopAd() {
   }, 60000);
 }
 
+function initDesktopPresenceWatcher() {
+  var badge = document.getElementById('phone-presence');
+  if (!badge) return;
+  getLobby().onChange(function (ads) {
+    var phones = ads.filter(function (ad) {
+      return ad.data && ad.data.app === 'tallyho-phone-ready';
+    });
+    if (!phones.length) { badge.hidden = true; return; }
+    badge.hidden = false;
+    badge.textContent = phones.length === 1
+      ? (phones[0].data.label || 'Phone') + ' on wifi'
+      : phones.length + ' phones on wifi';
+  });
+}
+
 function initMobileNearbyDiscovery() {
   var wrap = document.getElementById('nearby-desktops');
   var list = document.getElementById('nearby-list');
+  var connect = document.getElementById('mobile-connect');
   if (!wrap || !list) return;
+
+  // Mobile in lobby publishes phone-ready so desktop can show presence.
+  getLobby().publish('tallyho-phone-ready:' + myId, {
+    app: 'tallyho-phone-ready',
+    label: deviceLabel()
+  }, 60000);
 
   getLobby().onChange(function (ads) {
     var desktops = ads.filter(function (ad) {
@@ -493,6 +516,7 @@ function initMobileNearbyDiscovery() {
     if (!desktops.length) {
       wrap.hidden = true;
       list.innerHTML = '';
+      if (connect) connect.classList.remove('has-nearby');
       return;
     }
     wrap.hidden = false;
@@ -504,7 +528,19 @@ function initMobileNearbyDiscovery() {
       btn.addEventListener('click', function () { connectFromNearby(ad.data.peerId); });
       list.appendChild(btn);
     });
+    if (connect && !connect.classList.contains('has-nearby')) {
+      connect.classList.add('has-nearby');
+      stopScanner();
+    }
   });
+}
+
+function toggleOtherWaysToConnect() {
+  var connect = document.getElementById('mobile-connect');
+  if (!connect) return;
+  connect.classList.toggle('show-other');
+  if (connect.classList.contains('show-other')) startMobileScanner();
+  else stopScanner();
 }
 
 function connectFromNearby(peerId) {
@@ -1221,6 +1257,7 @@ function hideLightbox() {
 window.goHome = goHome;
 window.startApp = startApp;
 window.connectFromMobile = connectFromMobile;
+window.toggleOtherWaysToConnect = toggleOtherWaysToConnect;
 window.disconnect = disconnect;
 window.loadVLM = loadVLM;
 window.copyAgentLog = copyAgentLog;
